@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#00796B</color>
+    <color name="colorAccent">#009688</color>
+
+    <color name="textcolor_checked">#45C01A</color>
+    <color name="textcolor">#BEBEBE</color>
+
+    <color name="main_radiogroup">#F7F7F8</color>
+    <color name="main_black">#333</color>
+    <color name="main_gray">#9A9A9A</color>
+    <color name="lightgray">#d7d7d7</color>
+    <color name="white">#ffffffff</color>
+    <color name="dark">#00000000</color>
+    <color name="red"> #FF0000</color>
+    <color name="list_divider_color">#DADADA</color>
+    <color name="list_item_background_normal">@color/white</color>
+    <color name="list_item_background_pressed">#efefef</color>
+    <color name="view_divide_line">#ffdfdfdf</color>
+    <color name="window_background">#EBEBEB</color>
+</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_add"
+        android:orderInCategory="90"
+        android:icon="@drawable/add"
+        android:title="添加"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_dir_up"
+        android:icon="@android:drawable/ic_menu_revert"
+        app:showAsAction="ifRoom"
+        android:title="@string/menu_dir_up"
+        android:visible="false"/>
+    <item
+        android:id="@+id/menu_dir_select"
+        android:icon="@drawable/folder"
+        app:showAsAction="ifRoom"
+        android:title="@string/menu_dir_select"
+        android:visible="false"/>
+    <item
+        android:id="@+id/action_about_app"
+        android:orderInCategory="100"
+        android:title="关于APP"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about_me"
+        android:orderInCategory="100"
+        android:title="关于我"
+        app:showAsAction="never" />
+</menu>

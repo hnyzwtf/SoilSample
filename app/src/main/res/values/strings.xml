@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name">SoilSample</string>
+    <!-- 系统全局 -->
+    <string name="back">返回</string>
+
+    <string name="button_ok">确定</string>
+    <string name="button_reset">重置</string>
+    <string name="select_all">全选</string>
+    <string name="inverse_select">反选</string>
+    <string name="cancel_select">取消已选</string>
+    <string name="hint_required">必填</string>
+    <!-- 功能页面 -->
+    <string name="function">功能</string>
+    <string name="environ_variable">环境因子选择</string>
+    <string name="similarity_model">相似度模型选择</string>
+    <string name="add_sample">添加样点数据</string>
+    <!-- 设置页面 -->
+    <string name="set">设置</string>
+    <string name="help">帮助</string>
+    <string name="about_me">关于我们</string>
+    <string name="altersample_model">替代样点计算方法选择</string><!-- 地理环境相似度，FCM模糊隶属度-->
+
+    <!-- FCM -->
+    <string name="fcm_cluster">FCM聚类</string>
+    <string name="fuzzy_membership_map">模糊隶属度图层选择</string>
+    <string name="fcm_m">加权指数</string>
+    <string name="fcm_max_error">最大收敛误差</string>
+    <string name="fcm_iteration_number">迭代次数</string>
+    <string name="fcm_cluster_num">聚类数</string>
+
+    <!-- sample info -->
+    <string name="sample_name">名称</string>
+    <string name="sample_comment">html备注</string>
+    <string name="sample_picture">图片</string>
+    <string name="calc_alterSample">计算可替代样点</string>
+    <string name="export_altersamples">导出可替代样点为KML</string>
+    <string name="more">更多</string>
+    <string name="delete_marker">删除</string>
+    <string name="sample_lat">纬度</string>
+    <string name="sample_lng">经度</string>
+
+    <string name="params_set">参数设置</string>
+    <string name="unaccess_point">样点坐标:</string>
+    <string name="hint_unaccess_point">不可采点的坐标</string>
+    <string name="uncertain_threshold">相似性阈值:</string>
+    <string name="hint_uncertain_threshold">相似度计算阈值</string>
+    <string name="candidate_threshold">与不可采点的相似度:</string>
+    <string name="membership_threshold">与不可采点隶属度差值:</string>
+    <string name="hint_candidate_threshold">地理环境相似度</string>
+    <string name="hint_membership_threshold">隶属度差值:</string>
+    <string name="candidate_radius">替代样点距离不可采点(米):</string>
+    <string name="hint_candidate_radius">单位(米)</string>
+    <!-- 收藏页面 -->
+    <string name="label">标签</string>
+    <string name="deal_with">操作</string>
+    <!-- htmlcomment -->
+    <string name="notes">备注</string>
+    <string name="save">保存</string>
+    <!-- marker icon选择页面 -->
+    <string name="marker_icon">图标</string>
+
+    <!-- Error View -->
+    <string name="error_view_click_to_refresh">点击屏幕,重新加载</string>
+    <string name="error_view_no_data">暂无内容</string>
+    <string name="error_view_loading">加载中…</string>
+    <string name="error_view_load_error_click_to_refresh">无法连接到服务器\r\n请重试</string>
+    <string name="error_view_network_error_click_to_refresh">没有可用的网络</string>
+    <string name="tip_network_error">没有可用的网络</string>
+
+    <!-- 首页面 -->
+    <string name="tab_edit">编辑</string>
+    <string name="tab_favorite">收藏</string>
+    <string name="tab_function">功能</string>
+    <string name="tab_more">我</string>
+    <string name="filebrowser_text">Current folder: \n/THis/is/a/long/path/to/test/if/this/will/span/multiple/lines</string>
+    <string name="menu_dir_up">Up to parent directory</string>
+    <string name="menu_dir_select">Select current directory</string>
+</resources>

@@ -6,8 +6,7 @@
     <string name="button_ok">确定</string>
     <string name="button_reset">重置</string>
     <string name="select_all">全选</string>
-    <string name="inverse_select">反选</string>
-    <string name="cancel_select">取消已选</string>
+
     <string name="hint_required">必填</string>
     <!-- 功能页面 -->
     <string name="function">功能</string>
@@ -16,6 +15,7 @@
     <string name="add_sample">添加样点数据</string>
     <!-- 设置页面 -->
     <string name="set">设置</string>
+    <string name="exit">退出</string>
     <string name="help">帮助</string>
     <string name="about_me">关于我们</string>
     <string name="altersample_model">替代样点计算方法选择</string><!-- 地理环境相似度，FCM模糊隶属度-->
@@ -61,10 +61,10 @@
 
     <!-- Error View -->
     <string name="error_view_click_to_refresh">点击屏幕,重新加载</string>
-    <string name="error_view_no_data">暂无内容</string>
+    <string name="error_view_no_data">暂无内容\r\n请点我重试</string>
     <string name="error_view_loading">加载中…</string>
-    <string name="error_view_load_error_click_to_refresh">无法连接到服务器\r\n请重试</string>
-    <string name="error_view_network_error_click_to_refresh">没有可用的网络</string>
+    <string name="error_view_load_error_click_to_refresh">无法连接到服务器\r\n请点我重试</string>
+    <string name="error_view_network_error_click_to_refresh">没有可用的网络\r\n请点我重试</string>
     <string name="tip_network_error">没有可用的网络</string>
 
     <!-- 首页面 -->

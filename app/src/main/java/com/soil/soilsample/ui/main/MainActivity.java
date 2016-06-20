@@ -42,6 +42,7 @@ import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
 import com.soil.soilsample.support.kml.ReadKml;
 import com.soil.soilsample.support.util.ToastUtil;
+import com.soil.soilsample.ui.function.FunctionActivity;
 import com.soil.soilsample.ui.listener.MyOrientationListener;
 import com.soil.soilsample.ui.myinfo.MyInfoActivity;
 import com.soil.soilsample.ui.sampleinfo.SampleInfoActivity;
@@ -153,6 +154,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.tab_favorite:
                 break;
             case R.id.tab_function:
+                startActivity(new Intent(MainActivity.this, FunctionActivity.class));
                 break;
             case R.id.tab_me:
                 startActivity(new Intent(MainActivity.this, MyInfoActivity.class));

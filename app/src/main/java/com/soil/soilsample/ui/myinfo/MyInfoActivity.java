@@ -2,6 +2,7 @@ package com.soil.soilsample.ui.myinfo;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -102,7 +103,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
                 showSampleModelDialog();
                 break;
             case R.id.rl_set:
-
+                startActivity(new Intent(MyInfoActivity.this, SettingActivity.class));
                 break;
             default:
                 break;

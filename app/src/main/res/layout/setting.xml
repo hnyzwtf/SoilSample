@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/rl_about_me"
+            style="@style/option_item_rl"
+            android:layout_marginTop="@dimen/space_20">
+            <ImageView
+                style="@style/option_item_img"
+                android:contentDescription="@null"
+                android:background="@drawable/about_me"/>
+            <TextView
+                style="@style/option_item_text"
+                android:text="@string/about_me" />
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/list_divider_color"
+            android:visibility="gone" />
+        <LinearLayout
+            android:id="@+id/rl_exit"
+            style="@style/option_item_rl"
+            android:layout_marginTop="@dimen/space_20">
+            <ImageView
+                style="@style/option_item_img"
+                android:contentDescription="@null"
+                android:background="@drawable/icon_exit"/>
+            <TextView
+                style="@style/option_item_text"
+                android:text="@string/exit" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

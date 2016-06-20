@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:fitsSystemWindows="true">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/view_divide_line" />
+    <LinearLayout
+        android:padding="@dimen/space_8"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_fcm_m"
+            android:textSize="@dimen/text_size_16"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:text="@string/fcm_m"
+            android:layout_weight="3.0" />
+        <EditText
+            android:textSize="@dimen/text_size_16"
+            android:id="@+id/edit_fcm_m"
+            android:background="@null"
+            android:hint="@string/hint_required"
+            android:padding="@dimen/space_8"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5.0dip"
+            android:layout_weight="7.0" />
+    </LinearLayout>
+    <include layout="@layout/view_divide_line" />
+    <LinearLayout
+        android:padding="@dimen/space_8"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_fcm_iteration_num"
+            android:textSize="@dimen/text_size_16"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:text="@string/fcm_iteration_number"
+            android:layout_weight="3.0" />
+        <EditText
+            android:textSize="@dimen/text_size_16"
+            android:id="@+id/edit_fcm_iteration_num"
+            android:background="@null"
+            android:hint="@string/hint_required"
+            android:padding="@dimen/space_8"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5.0dip"
+            android:layout_weight="7.0"/>
+    </LinearLayout>
+    <include layout="@layout/view_divide_line" />
+    <LinearLayout
+        android:padding="@dimen/space_8"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_fcm_max_error"
+            android:textSize="@dimen/text_size_16"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:text="@string/fcm_max_error"
+            android:layout_weight="3.0" />
+        <EditText
+            android:textSize="@dimen/text_size_16"
+            android:id="@+id/edit_fcm_max_error"
+            android:background="@null"
+            android:hint="@string/hint_required"
+            android:padding="@dimen/space_8"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5.0dip"
+            android:layout_weight="7.0"/>
+    </LinearLayout>
+    <include layout="@layout/view_divide_line" />
+    <LinearLayout
+        android:padding="@dimen/space_8"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_fcm_cluster_num"
+            android:textSize="@dimen/text_size_16"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:text="@string/fcm_cluster_num"
+            android:layout_weight="3.0" />
+        <EditText
+            android:textSize="@dimen/text_size_16"
+            android:id="@+id/edit_fcm_cluster_num"
+            android:background="@null"
+            android:hint="@string/hint_required"
+            android:padding="@dimen/space_8"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5.0dip"
+            android:layout_weight="7.0"/>
+    </LinearLayout>
+    <include layout="@layout/view_divide_line" />
+</LinearLayout>

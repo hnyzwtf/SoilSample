@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinner_gower_value">
+        <item>Geology</item>
+        <item>Climate</item>
+        <item>Terrain</item>
+        <item>Vegetation</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="spinner_gaussian_value">
+        <item>Geology</item>
+        <item>Climate</item>
+        <item>Terrain</item>
+        <item>Vegetation</item>
+        <item>Other</item>
+    </string-array>
+</resources>

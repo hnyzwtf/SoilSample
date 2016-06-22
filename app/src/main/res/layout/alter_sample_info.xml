@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+    <!-- name, latitude, longitude, costvalue-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!-- name of the sample-->
+        <LinearLayout
+            android:padding="@dimen/space_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:textSize="@dimen/text_size_16"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_name"
+                android:layout_weight="3.0" />
+            <EditText
+                android:textSize="@dimen/text_size_16"
+                android:id="@+id/edit_sample_name"
+                android:padding="@dimen/space_8"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5.0dip"
+                android:layout_weight="7.0" />
+        </LinearLayout>
+        <!-- latitude of the sample-->
+        <LinearLayout
+            android:padding="@dimen/space_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:textSize="@dimen/text_size_16"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_lat"
+                android:layout_weight="3.0" />
+            <EditText
+                android:textSize="@dimen/text_size_16"
+                android:id="@+id/edit_sample_lat"
+
+                android:padding="@dimen/space_8"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5.0dip"
+                android:layout_weight="7.0" />
+        </LinearLayout>
+        <!-- longitude of the sample-->
+        <LinearLayout
+            android:padding="@dimen/space_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:textSize="@dimen/text_size_16"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_lng"
+                android:layout_weight="3.0" />
+            <EditText
+                android:textSize="@dimen/text_size_16"
+                android:id="@+id/edit_sample_lng"
+
+                android:padding="@dimen/space_8"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5.0dip"
+                android:layout_weight="7.0" />
+        </LinearLayout>
+        <!-- cost value of the sample-->
+        <LinearLayout
+            android:padding="@dimen/space_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:textSize="@dimen/text_size_16"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:text="@string/sample_cost"
+                android:layout_weight="3.0" />
+            <EditText
+                android:textSize="@dimen/text_size_16"
+                android:id="@+id/edit_sample_cost"
+
+                android:padding="@dimen/space_8"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5.0dip"
+                android:layout_weight="7.0" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

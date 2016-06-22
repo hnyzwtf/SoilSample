@@ -1,6 +1,7 @@
 package com.soil.soilsample.ui.sampleinfo;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -11,10 +12,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.soil.soilsample.R;
 import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
+import com.soil.soilsample.model.CoordinateAlterSample;
+import com.soil.soilsample.support.kml.WriteKml;
 import com.soil.soilsample.support.util.ToastUtil;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by GIS on 2016/6/13 0013.
@@ -35,12 +44,12 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     private Bundle intentBundle;
     private String markerName = "";//声明样点marker的name属性，从intent中获取
     private String markerHtmlComment = "";//声明样点marker的html属性，从intent中获取
-    private String markerLat = "";
-    private String markerLng = "";
+    private String markerLat;
+    private String markerLng;
     private int imageSelected = 0;//选中的marker图片，从SamplePicSelectActivity传入
     private int markerIconId = 0;//从intentFromMainActivity传入的marker的图标
 
-    public static int sampleModel = 0;
+    public static int altersampleModel = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +59,7 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         initEvents();
         initEditText();
         initSamplePicBtnImage();
+        altersampleModel = getSetInfoFromShared();//从shared中读取配置信息，在本类中是读取用户选择了什么采样方法
     }
 
     private void initView() {
@@ -128,6 +138,28 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
                 Intent intentToSamplePicSelect = new Intent(SampleInfoActivity.this, SamplePicSelectActivity.class);
                 startActivityForResult(intentToSamplePicSelect, 1);//使用这个方法可以接收SamplePicSelectActivity返回的数据
                 break;
+            case R.id.rl_calc_alterSample://计算可替代样点
+                if (altersampleModel == 0)
+                {
+                    String markerLongLat = markerLng + "," + markerLat;
+                    Intent intentToAlterOptions = new Intent(SampleInfoActivity.this, AlternativeParamsActivity.class);
+                    intentToAlterOptions.putExtra("markerLongLat", markerLongLat);
+                    intentToAlterOptions.putExtra("markerName", markerName);
+                    startActivity(intentToAlterOptions);
+
+                }
+                if (altersampleModel == 1)
+                {
+                    String markerLongLat = markerLng + "," + markerLat;
+                    Intent intentToAlterFCMOptions = new Intent(SampleInfoActivity.this, AlterParamsFCMActivity.class);
+                    intentToAlterFCMOptions.putExtra("markerLongLat", markerLongLat);
+                    intentToAlterFCMOptions.putExtra("markerName", markerName);
+                    startActivity(intentToAlterFCMOptions);
+                }
+                break;
+            case R.id.rl_export_altersamples:
+                exportAlterSamples();
+                break;
             default:
                 break;
         }
@@ -153,7 +185,12 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         }
 
     }
-
+    private int getSetInfoFromShared()
+    {
+        SharedPreferences preferences = getSharedPreferences("SettingInfo", MODE_PRIVATE);
+        int sampleModel = preferences.getInt("altersampleModel", 0);
+        return sampleModel;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_sample_info, menu);
@@ -179,11 +216,41 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
                 }
                 break;
             case R.id.action_click_me:
-                ToastUtil.show(this, "你点我了");
+                ToastUtil.show(this, "谁让你点我的！！！");
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void exportAlterSamples()
+    {
+        //先从本地取出可替代样点
+        List<CoordinateAlterSample> alterSamples = null;
+
+        SharedPreferences preferences = getSharedPreferences("AlterSamplesList", MODE_PRIVATE);
+        String json = preferences.getString(markerName, null);
+
+        SharedPreferences preferencesFCM = getSharedPreferences("AlterFCMSamplesList", MODE_PRIVATE);
+        String jsonFCM = preferencesFCM.getString(markerName, null);
+
+        if (json != null || jsonFCM != null)
+        {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<CoordinateAlterSample>>(){}.getType();
+            alterSamples = new ArrayList<CoordinateAlterSample>();
+            alterSamples = gson.fromJson(json, type);
+            //调用WriteKml中的方法，写出Kml
+            WriteKml writeKml = new WriteKml();
+            try {
+                writeKml.createKml( markerName, alterSamples);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            ToastUtil.show(SampleInfoActivity.this, "亲，你还没有计算可替代样点呢~~");
+        }
     }
 }

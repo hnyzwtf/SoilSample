@@ -9,6 +9,8 @@ import java.util.List;
 public interface AsyncResponse {
 	
 	void onDataReceivedSuccess(List<String> listData);
+	// 专门用于处理服务器返回的可替代样点坐标
+	void onCoorXYReceivedSuccess(List<String> listDataX, List<String> listDataY);
 	void onDataReceivedFailed();
 	void onConnectServerFailed();
 }

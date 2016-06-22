@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.soil.soilsample.R;
 import com.soil.soilsample.base.BaseActivity;
+import com.soil.soilsample.base.BaseApplication;
 import com.soil.soilsample.model.AsyncResponse;
 import com.soil.soilsample.support.adapter.FuzzyMembershipAdapter;
 import com.soil.soilsample.ui.empty.EmptyLayout;
@@ -126,6 +127,11 @@ public class FuzzyMembershipActivity extends BaseActivity {
                 }
 
                 @Override
+                public void onCoorXYReceivedSuccess(List<String> listDataX, List<String> listDataY) {
+
+                }
+
+                @Override
                 public void onDataReceivedFailed() {
                     mEmptyLayout.setErrorType(EmptyLayout.NODATA);
 
@@ -150,8 +156,9 @@ public class FuzzyMembershipActivity extends BaseActivity {
     class SocketConnAsync extends AsyncTask<String, Void, String>
     {
         public AsyncResponse asyncResponse;
-        String serverIP = "222.192.7.122";//223.2.36.52
-        String listenPort = "8181";
+        String serverIP = BaseApplication.getServerIP();//223.2.36.52
+        int listenPort = BaseApplication.getPort();
+        int connTimeOut = BaseApplication.getConnTimeOut();
         Socket socketConn = null;
         BufferedOutputStream outputStream = null;
         BufferedReader bufferedReader = null;
@@ -169,8 +176,8 @@ public class FuzzyMembershipActivity extends BaseActivity {
             try {
 
                 socketConn = new Socket();
-                SocketAddress address = new InetSocketAddress(serverIP, 8181);
-                socketConn.connect(address, 6000);
+                SocketAddress address = new InetSocketAddress(serverIP, listenPort);
+                socketConn.connect(address, connTimeOut);
                 socketConn.setTcpNoDelay(true);
                 connected = true;
 

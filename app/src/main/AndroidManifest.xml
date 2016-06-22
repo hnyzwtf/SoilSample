@@ -30,7 +30,8 @@
             android:value="kEuAEvnGwqMzegSHAsiOeliv0QSiKGmY" />
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">
         </service>
-        <activity android:name=".ui.main.MainActivity">
+        <activity android:name=".ui.main.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -46,6 +47,9 @@
         <activity android:name=".ui.function.EnvironVariableActivity"/>
         <activity android:name=".ui.function.FuzzyMembershipActivity"/>
         <activity android:name=".ui.function.FCMActivity"/>
+        <activity android:name=".ui.sampleinfo.AlternativeParamsActivity"/>
+        <activity android:name=".ui.sampleinfo.AlterSampleInfoActivity"/>
+        <activity android:name=".ui.sampleinfo.AlterParamsFCMActivity"/>
     </application>
 
 </manifest>

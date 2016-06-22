@@ -35,7 +35,6 @@
     <string name="calc_alterSample">计算可替代样点</string>
     <string name="export_altersamples">导出可替代样点为KML</string>
     <string name="more">更多</string>
-    <string name="delete_marker">删除</string>
     <string name="sample_lat">纬度</string>
     <string name="sample_lng">经度</string>
 
@@ -72,6 +71,8 @@
     <string name="tab_favorite">收藏</string>
     <string name="tab_function">功能</string>
     <string name="tab_more">我</string>
+    <string name="sample_cost">可达性</string>
+    <string name="sample_latlng">坐标</string>
     <string name="filebrowser_text">Current folder: \n/THis/is/a/long/path/to/test/if/this/will/span/multiple/lines</string>
     <string name="menu_dir_up">Up to parent directory</string>
     <string name="menu_dir_select">Select current directory</string>

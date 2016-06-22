@@ -40,14 +40,20 @@ import com.google.gson.reflect.TypeToken;
 import com.soil.soilsample.R;
 import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
+import com.soil.soilsample.model.CoordinateAlterSample;
 import com.soil.soilsample.support.kml.ReadKml;
+import com.soil.soilsample.support.util.SDFileHelper;
 import com.soil.soilsample.support.util.ToastUtil;
 import com.soil.soilsample.ui.function.FunctionActivity;
 import com.soil.soilsample.ui.listener.MyOrientationListener;
 import com.soil.soilsample.ui.myinfo.MyInfoActivity;
+import com.soil.soilsample.ui.sampleinfo.AlterSampleInfoActivity;
 import com.soil.soilsample.ui.sampleinfo.SampleInfoActivity;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -89,9 +95,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private LinearLayout tabMe;
     // 当前正在操作的marker
     private Marker currentMarker;
-    // sampleinfoactivity
+    // sampleinfoActivity
     private String currentMarkerName;//接收从SampleInfoActivity返回的当前正在操作的markerName
     private int samplePicChanged = 0;//设置更改后的marker的图片
+    // markers集合，kmlMarkers保存所有的从Kml文件中解析来的marker，alterMarkers保存所有的服务器返回的可替代样点坐标marker
+    private List<Marker> kmlMarkers = new ArrayList<Marker>();
+    private List<Marker> alterMarkers = new ArrayList<Marker>();
+    //设置标志位，0表示此marker是从kml文件中得到了，1表示为可替代样点的marker
+    private int markerFlag = -1;
+    // 设置标志位，判断底部导航栏是否可以点击
+    private Boolean isBottomClickable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +115,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         initEvents();
         changeDefaultBaiduMapView();
         initMapLocation();
+        createSoilSampleDir();
+        copySampleKmlToSD();
     }
     private void initView()
     {
@@ -131,6 +146,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         tabFavorite.setOnClickListener(this);
         tabFunction.setOnClickListener(this);
         tabMe.setOnClickListener(this);
+    }
+
+    /**
+     * 获取从AlternativeParamsActivity中传递的altersamples list
+     */
+    private void initIntentParams()
+    {
+        // intent from AlternativeParamsActivity
+        Intent intentFromAlterParams = getIntent();
+        //ArrayList<CoordinateAlterSample> alterSamplesList = new ArrayList<CoordinateAlterSample>();
+        ArrayList<CoordinateAlterSample> alterSamplesList  = intentFromAlterParams.getParcelableArrayListExtra("alterSampleList");
+
+        if (alterSamplesList != null)
+        {
+            addAlterMarkers(alterSamplesList);
+
+        }
+        // intent from AlterParamsFCMActivity
+        Intent intentFromAlterFCM = getIntent();
+        ArrayList<CoordinateAlterSample> alterFCMSamplesList  = intentFromAlterFCM.getParcelableArrayListExtra("alterFCMSampleList");
+
+        if (alterFCMSamplesList != null)
+        {
+            addAlterMarkers(alterFCMSamplesList);
+
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override
@@ -413,6 +460,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 //设置marker属性
                 overlayOptions = new MarkerOptions().position(desLatLng).icon(defaultBitmap).zIndex(6);
                 marker = (Marker) myBaiduMap.addOverlay(overlayOptions);
+                kmlMarkers.add(marker);
                 //设置textoptions属性
                 textOptions = new TextOptions().text(marks.get(i).getName())
                         .fontSize(26)
@@ -435,55 +483,110 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
 
     }
-
     /**
-     * @param sourceLatlng
-     * @param changedBitmap
-     * 更改marker图标，暂时没有什么用
+     * 添加服务器返回的可替代样点marker到地图
      */
-    private void changeMarkerIcon(LatLng sourceLatlng, BitmapDescriptor changedBitmap)
+    private void addAlterMarkers(ArrayList<CoordinateAlterSample> coorList)
     {
-        LatLng desLatlng = null;
-        CoordinateConverter converter = new CoordinateConverter();
-        converter.from(CoordinateConverter.CoordType.GPS);
-        converter.coord(sourceLatlng);
-        desLatlng = converter.convert();
-        OverlayOptions overlayOptions = new MarkerOptions().position(desLatlng).icon(changedBitmap).zIndex(6);
-        myBaiduMap.addOverlay(overlayOptions);
-    }
-    /*
-	* 解析kml成功后，将所有的坐标保存下来
-	* */
-    private void saveKmlCoorsToShared(String kmlNames, List<Coordinate> coorList)
-    {
-        SharedPreferences.Editor editor = getSharedPreferences(kmlNames, MODE_PRIVATE).edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(coorList);
-        editor.putString(kmlNames, json);
-        editor.commit();
-    }
 
-    /**
-     * @param kmlName
-     * @return
-     * 将saveKmlCoorsToShared方法中保存到本地的Kml坐标取出来，存放到list中
-     */
-    private List<Coordinate> getKmlCoorsFromShared(String kmlName)
-    {
-        List<Coordinate> coorList = null;
-        SharedPreferences preferences = getSharedPreferences(kmlName, MODE_PRIVATE);
-        String json = preferences.getString(kmlName, null);
-        if (json != null)
+        myBaiduMap.setOnMapClickListener(this);
+        myBaiduMap.setOnMarkerClickListener(this);
+        //将marker添加到地图上
+        LatLng sourceLatLng = null;
+        LatLng desLatLng = null;
+        double latitude = 0.0;
+        double longitude = 0.0;
+        Marker marker = null;
+        String alterSampleName = null;
+        OverlayOptions overlayOptions;
+        OverlayOptions textOptions;//文字覆盖物
+        BitmapDescriptor defaultAlterSampleBitmap = BitmapDescriptorFactory.fromResource(R.drawable.alter_sample_default);
+        ArrayList<BitmapDescriptor> bitmapList = new ArrayList<BitmapDescriptor>();
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_1));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_2));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_3));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_4));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_5));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_6));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_7));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_8));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_9));
+        bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_10));
+
+        for (int i = 0; i < coorList.size(); i++)
         {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Coordinate>>(){}.getType();
-            coorList = new ArrayList<Coordinate>();
-            coorList = gson.fromJson(json, type);
+            latitude = coorList.get(i).getY();
+            longitude = coorList.get(i).getX();
+            //将gps坐标转化为百度坐标,coorList是服务器返回的可替代坐标，getX是经度，getY是纬度
+            sourceLatLng = new LatLng(latitude, longitude);
+            //Log.d(TAG, "addAlterMarkers: getY is " + String.valueOf(latitude) + "getX is " + String.valueOf(longitude));
+            CoordinateConverter converter = new CoordinateConverter();
+            converter.from(CoordinateConverter.CoordType.GPS);
+            converter.coord(sourceLatLng);
+            desLatLng = converter.convert();
 
+            alterSampleName = coorList.get(i).getName();
+            switch (Integer.parseInt(alterSampleName))
+            {
+                case 0:
+                    //设置marker属性
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(0)).zIndex(6);
+                    break;
+                case 1:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(1)).zIndex(6);
+                    break;
+                case 2:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(2)).zIndex(6);
+                    break;
+                case 3:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(3)).zIndex(6);
+                    break;
+                case 4:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(4)).zIndex(6);
+                    break;
+                case 5:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(5)).zIndex(6);
+                    break;
+                case 6:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(6)).zIndex(6);
+                    break;
+                case 7:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(7)).zIndex(6);
+                    break;
+                case 8:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(8)).zIndex(6);
+                    break;
+                case 9:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(9)).zIndex(6);
+
+                    break;
+                default:
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(defaultAlterSampleBitmap).zIndex(6);
+                    break;
+            }
+
+            marker = (Marker) myBaiduMap.addOverlay(overlayOptions);
+
+            alterMarkers.add(marker);
+           /* //设置textoptions属性
+            textOptions = new TextOptions().text(alterSampleName)
+                    .fontSize(26)
+                    .position(desLatLng)
+                    .align(TextOptions.ALIGN_RIGHT, TextOptions.ALIGN_TOP);
+            myBaiduMap.addOverlay(textOptions);*/
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("alterMarker_bundle", coorList.get(i));
+            marker.setExtraInfo(bundle);
         }
 
-        return coorList;
+
+        MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newLatLngZoom(desLatLng, 16f);
+        myBaiduMap.animateMapStatus(mapStatusUpdate);
+
     }
+
+
     @Override
     public void onMapClick(LatLng latLng) {
 
@@ -508,6 +611,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
 
         }
+        if (isBottomClickable == false)//若底部导航栏处于不可点击状态，就将其转为可点击状态
+        {
+            setBottomLayoutClickTrue();
+        }
     }
 
     @Override
@@ -518,17 +625,40 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public boolean onMarkerClick(Marker marker) {
         currentMarker = marker;
-        Bundle bundle = marker.getExtraInfo();
-        Coordinate markerCoor = bundle.getParcelable("marker_bundle");
         TextView markerName = (TextView) markOverviewLayout.findViewById(R.id.mark_name);
         TextView markerLatlng = (TextView) markOverviewLayout.findViewById(R.id.mark_latlng);
-        double latitude = markerCoor.getX();
-        double longitude = markerCoor.getY();
+        TextView markerCost = (TextView) markOverviewLayout.findViewById(R.id.mark_cost);
+        LinearLayout markerCostLayout = (LinearLayout) markOverviewLayout.findViewById(R.id.rl_mark_cost);
+        double latitude = 0.0;
+        double longitude = 0.0;
+        String costVaule;
+        if (kmlMarkers.contains(marker))
+        {
+            markerFlag = 0;
+            Bundle bundle = marker.getExtraInfo();
+            Coordinate markerCoor = bundle.getParcelable("marker_bundle");
+            latitude = markerCoor.getX();
+            longitude = markerCoor.getY();
+            markerName.setText(markerCoor.getName());
+            markerLatlng.setText(String.valueOf(df.format(latitude)) + "   " + String.valueOf(df.format(longitude)));
+            markerCostLayout.setVisibility(View.GONE);
+            markOverviewLayout.setVisibility(View.VISIBLE);
+            setBottomLayoutClickFalse();
+        }else {
+            markerFlag = 1;
+            Bundle bundle = marker.getExtraInfo();
+            CoordinateAlterSample markerCoor = bundle.getParcelable("alterMarker_bundle");
+            latitude = markerCoor.getY();//可替代样点坐标，是从服务器返回的，因此getX是经度，getY是纬度
+            longitude = markerCoor.getX();
+            costVaule = markerCoor.getCostValue();
+            markerName.setText(markerCoor.getName());
+            markerLatlng.setText(String.valueOf(df.format(latitude)) + "   " + String.valueOf(df.format(longitude)));
+            markerCost.setText(costVaule);
+            markerCostLayout.setVisibility(View.VISIBLE);
+            markOverviewLayout.setVisibility(View.VISIBLE);
+            setBottomLayoutClickFalse();
+        }
 
-        markerName.setText(markerCoor.getName());
-        markerLatlng.setText(String.valueOf(df.format(latitude)) + "   " + String.valueOf(df.format(longitude)));
-
-        markOverviewLayout.setVisibility(View.VISIBLE);
 
         return true;
     }
@@ -536,11 +666,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     {
         if (currentMarker != null)
         {
-            Bundle bundle = currentMarker.getExtraInfo();
-            Intent intentToSampleInfo = new Intent(MainActivity.this, SampleInfoActivity.class);
-            intentToSampleInfo.putExtra("markerInfoBundle", bundle);
-            intentToSampleInfo.putExtra("markerIconId",samplePicChanged);
-            startActivityForResult(intentToSampleInfo, 0);//requestCode我们设置为0
+            if (markerFlag == 0) //表示是从Kml文件中得来的marker
+            {
+                Bundle bundle = currentMarker.getExtraInfo();
+                Intent intentToSampleInfo = new Intent(MainActivity.this, SampleInfoActivity.class);
+                intentToSampleInfo.putExtra("markerInfoBundle", bundle);
+                intentToSampleInfo.putExtra("markerIconId",samplePicChanged);
+                startActivityForResult(intentToSampleInfo, 0);//requestCode我们设置为0
+            }
+            if (markerFlag == 1)
+            {
+                Bundle bundle = currentMarker.getExtraInfo();
+                Intent intentToAlterSampleInfo = new Intent(MainActivity.this, AlterSampleInfoActivity.class);
+                intentToAlterSampleInfo.putExtra("alterMarkerInfoBundle", bundle);
+                startActivity(intentToAlterSampleInfo);
+            }
         }
 
     }
@@ -638,12 +778,121 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     protected void onResume() {
         super.onResume();
         mMapView.onResume();
+        initIntentParams();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mMapView.onPause();
+    }
+    /**
+     * @param sourceLatlng
+     * @param changedBitmap
+     * 更改marker图标，暂时没有什么用
+     */
+    private void changeMarkerIcon(LatLng sourceLatlng, BitmapDescriptor changedBitmap)
+    {
+        LatLng desLatlng = null;
+        CoordinateConverter converter = new CoordinateConverter();
+        converter.from(CoordinateConverter.CoordType.GPS);
+        converter.coord(sourceLatlng);
+        desLatlng = converter.convert();
+        OverlayOptions overlayOptions = new MarkerOptions().position(desLatlng).icon(changedBitmap).zIndex(6);
+        myBaiduMap.addOverlay(overlayOptions);
+    }
+    /*
+	* 解析kml成功后，将所有的坐标保存下来
+	* */
+    private void saveKmlCoorsToShared(String kmlNames, List<Coordinate> coorList)
+    {
+        SharedPreferences.Editor editor = getSharedPreferences(kmlNames, MODE_PRIVATE).edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(coorList);
+        editor.putString(kmlNames, json);
+        editor.commit();
+    }
+
+    /**
+     * @param kmlName
+     * @return
+     * 将saveKmlCoorsToShared方法中保存到本地的Kml坐标取出来，存放到list中
+     */
+    private List<Coordinate> getKmlCoorsFromShared(String kmlName)
+    {
+        List<Coordinate> coorList = null;
+        SharedPreferences preferences = getSharedPreferences(kmlName, MODE_PRIVATE);
+        String json = preferences.getString(kmlName, null);
+        if (json != null)
+        {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Coordinate>>(){}.getType();
+            coorList = new ArrayList<Coordinate>();
+            coorList = gson.fromJson(json, type);
+
+        }
+
+        return coorList;
+    }
+
+    /**
+     * 设置底部导航栏按钮不可点击
+     */
+    private void setBottomLayoutClickFalse()
+    {
+        tabEdit.setOnClickListener(null);
+        tabFavorite.setOnClickListener(null);
+        tabFunction.setOnClickListener(null);
+        tabMe.setOnClickListener(null);
+        isBottomClickable = false;
+    }
+    /**
+     * 设置底部导航栏按钮可以点击
+     */
+    private void setBottomLayoutClickTrue()
+    {
+        tabEdit.setOnClickListener(this);
+        tabFavorite.setOnClickListener(this);
+        tabFunction.setOnClickListener(this);
+        tabMe.setOnClickListener(this);
+        isBottomClickable = true;
+    }
+    public void createSoilSampleDir()
+    {
+        SDFileHelper sdFileHelper = new SDFileHelper(MainActivity.this);
+        sdFileHelper.createDirOnSD();
+    }
+
+    /**
+     * 在assets目录下存放着一个kml文件，将此kml文件复制到sd/soilsample目录下
+     */
+    private void copySampleKmlToSD()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File file = new File(Environment.getExternalStorageDirectory().getCanonicalPath()
+                            + "/" + "SoilSample" + "/" + "fcmsamples.kmz");
+                    if (! file.exists())
+                    {
+                        InputStream inputStream = getResources().getAssets().open("fcmsamples.kmz");
+                        FileOutputStream outputStream = new FileOutputStream(Environment.getExternalStorageDirectory().getCanonicalPath()
+                                + "/" + "SoilSample" + "/" + "fcmsamples.kmz");
+                        int temp = 0;
+                        byte[] buffer = new byte[1024];
+                        while ((temp = inputStream.read(buffer)) != -1)
+                        {
+                            outputStream.write(buffer, 0, temp);
+                        }
+                        inputStream.close();
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 //    @Override
 //    public void onBackPressed() {

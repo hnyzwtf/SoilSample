@@ -19,7 +19,7 @@ android {
     }
     sourceSets {
         main {
-            jniLibs.srcDir 'libs'
+
         }
 
     }
@@ -34,4 +34,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
     compile files('libs/locSDK_6.13.jar')
     compile files('libs/dom4j-1.6.1.jar')
+    compile files('libs/BaiduNaviSDK_3.1.1.jar')
+    compile files('libs/httpmime-4.1.2.jar')
 }

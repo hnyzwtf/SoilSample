@@ -1,10 +1,13 @@
 package com.soil.soilsample.ui.main;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -35,6 +39,10 @@ import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.utils.CoordinateConverter;
+import com.baidu.navisdk.adapter.BNOuterTTSPlayerCallback;
+import com.baidu.navisdk.adapter.BNRoutePlanNode;
+import com.baidu.navisdk.adapter.BNaviSettingManager;
+import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.soil.soilsample.R;
@@ -42,6 +50,7 @@ import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
 import com.soil.soilsample.model.CoordinateAlterSample;
 import com.soil.soilsample.support.kml.ReadKml;
+import com.soil.soilsample.support.util.CoorToBaidu;
 import com.soil.soilsample.support.util.SDFileHelper;
 import com.soil.soilsample.support.util.ToastUtil;
 import com.soil.soilsample.ui.function.FunctionActivity;
@@ -57,6 +66,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, FileBrowserFragment.OnFileAndFolderFinishListener,
@@ -74,7 +84,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private float myCurrentX;// 定位数据的方向信息
     private BitmapDescriptor myLocationBitmap;
     private Boolean isFirstIn = true;// 是否是第一次定位
-    private double latitude,longtitude;//定义的经度和纬度
+    private double latitude,longtitude;//定位的经度和纬度
     private MyOrientationListener myOrientationListener;
     // other
     private boolean doubleBackToExitOnce = false;
@@ -82,11 +92,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private String mInitDir = Environment.getExternalStorageDirectory()
             .getPath();
     private static final String TAG = "MainActivity";
+    // navi
+    private String authinfo = null;
+    public static List<Activity> activityList = new LinkedList<Activity>();
+    public static final String ROUTE_PLAN_NODE = "routePlanNode";
     // ReadKml
     private ReadKml readKml = null;
     // 点击某个marker后，从底部弹出的布局
     private LinearLayout markOverviewLayout;
-    private LinearLayout markDetailLayout;//marker详情按钮布局
+    private TextView markDetailLayout;//marker详情
+    private TextView markNaviLayout;//marker导航
     // 底部导航栏布局
     private LinearLayout bottomNaviLayout;
     private LinearLayout tabEdit;
@@ -109,14 +124,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activityList.add(this);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+
         initView();
         initEvents();
         changeDefaultBaiduMapView();
         initMapLocation();
-        createSoilSampleDir();
-        copySampleKmlToSD();
+
+        if (createSoilSampleDir())
+        {
+            copySampleKmlToSD();
+            initNavi();
+        }
     }
     private void initView()
     {
@@ -128,7 +149,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         myLocation = (ImageView) findViewById(R.id.my_location);
         selectLocationMode = (ImageView) findViewById(R.id.map_location);
         markOverviewLayout = (LinearLayout) findViewById(R.id.mark_overview_layout);
-        markDetailLayout = (LinearLayout) findViewById(R.id.mark_detail_layout);
+        markDetailLayout = (TextView) findViewById(R.id.mark_detail_layout);
+        markNaviLayout = (TextView) findViewById(R.id.mark_navi_layout);
         bottomNaviLayout = (LinearLayout) findViewById(R.id.bottom_navibar);
         tabEdit = (LinearLayout) findViewById(R.id.tab_edit);
         tabFavorite = (LinearLayout) findViewById(R.id.tab_favorite);
@@ -142,6 +164,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         myLocation.setOnClickListener(this);
         selectLocationMode.setOnClickListener(this);
         markDetailLayout.setOnClickListener(this);
+        markNaviLayout.setOnClickListener(this);
         tabEdit.setOnClickListener(this);
         tabFavorite.setOnClickListener(this);
         tabFunction.setOnClickListener(this);
@@ -195,6 +218,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.mark_detail_layout:
                 intentToSampleInfoActivity();
+                break;
+            case R.id.mark_navi_layout:
+                if (BaiduNaviManager.isNaviInited()) {
+                    routeplanToNavi();
+                }
                 break;
             case R.id.tab_edit:
                 break;
@@ -701,6 +729,150 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     /**
+     * 初始化导航
+     */
+    private void initNavi() {
+
+        BNOuterTTSPlayerCallback ttsCallback = null;
+
+        BaiduNaviManager.getInstance().init(this, Environment.getExternalStorageDirectory().toString(), SDFileHelper.APP_FOLDER_NAME,
+                new BaiduNaviManager.NaviInitListener() {
+            @Override
+            public void onAuthResult(int status, String msg) {
+                if (0 == status) {
+                    //authinfo = "key校验成功!";
+                } else {
+                    authinfo = "key校验失败, " + msg;
+                }
+                MainActivity.this.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, authinfo, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            public void initSuccess() {
+                Toast.makeText(MainActivity.this, "百度导航引擎初始化成功", Toast.LENGTH_SHORT).show();
+                initSetting();
+            }
+
+            public void initStart() {
+                //Toast.makeText(MainActivity.this, "百度导航引擎初始化开始", Toast.LENGTH_SHORT).show();
+            }
+
+            public void initFailed() {
+                Toast.makeText(MainActivity.this, "百度导航引擎初始化失败", Toast.LENGTH_SHORT).show();
+            }
+
+
+        },  null, ttsHandler, null);
+
+    }
+
+    /**
+     * 百度导航的相关设置
+     */
+    private void initSetting(){
+        BNaviSettingManager.setDayNightMode(BNaviSettingManager.DayNightMode.DAY_NIGHT_MODE_DAY);
+        BNaviSettingManager.setShowTotalRoadConditionBar(BNaviSettingManager.PreViewRoadCondition.ROAD_CONDITION_BAR_SHOW_ON);
+        BNaviSettingManager.setVoiceMode(BNaviSettingManager.VoiceMode.Veteran);
+        BNaviSettingManager.setPowerSaveMode(BNaviSettingManager.PowerSaveMode.DISABLE_MODE);
+        BNaviSettingManager.setRealRoadCondition(BNaviSettingManager.RealRoadCondition.NAVI_ITS_ON);
+    }
+    /**
+     * 内部TTS播报状态回传handler
+     */
+    private Handler ttsHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            int type = msg.what;
+            switch (type) {
+                case BaiduNaviManager.TTSPlayMsgType.PLAY_START_MSG: {
+
+                    //ToastUtil.show(MainActivity.this, "Handler : TTS play start");
+                    break;
+                }
+                case BaiduNaviManager.TTSPlayMsgType.PLAY_END_MSG: {
+
+                    //ToastUtil.show(MainActivity.this, "Handler : TTS play end");
+                    break;
+                }
+                default :
+                    break;
+            }
+        }
+    };
+    private void routeplanToNavi() {
+        BNRoutePlanNode.CoordinateType coType = BNRoutePlanNode.CoordinateType.BD09LL;
+        BNRoutePlanNode sNode = null;
+        BNRoutePlanNode eNode = null;
+        LatLng naviBeginLatLng = new LatLng(latitude, longtitude);//导航起点，即定位位置的坐标
+        LatLng naviDestLatLng = null;
+        if (currentMarker != null)
+        {
+            if (markerFlag == 0) //表示是从Kml文件中得来的marker
+            {
+                Bundle bundle = currentMarker.getExtraInfo();
+                Coordinate markerCoor = bundle.getParcelable("marker_bundle");
+
+                // kml文件中的坐标为导航目的地坐标，需要将其从gps转为百度坐标
+                naviDestLatLng = CoorToBaidu.GPS2Baidu09ll(markerCoor.getX(), markerCoor.getY());
+            }
+            if (markerFlag == 1)
+            {
+                Bundle bundle = currentMarker.getExtraInfo();
+                CoordinateAlterSample markerCoor = bundle.getParcelable("alterMarker_bundle");
+                // 可替代样点的坐标为导航目的地坐标，需要将其从gps转为百度坐标，注意getY是纬度
+                naviDestLatLng = CoorToBaidu.GPS2Baidu09ll(markerCoor.getY(), markerCoor.getX());//getY是纬度，getX是经度
+            }
+        }
+        sNode = new BNRoutePlanNode(naviBeginLatLng.longitude, naviBeginLatLng.latitude, "百度大厦", null, coType);
+        eNode = new BNRoutePlanNode(naviDestLatLng.longitude, naviDestLatLng.latitude, "北京天安门", null, coType);
+
+        if (sNode != null && eNode != null) {
+            List<BNRoutePlanNode> list = new ArrayList<BNRoutePlanNode>();
+            list.add(sNode);
+            list.add(eNode);
+            BaiduNaviManager.getInstance().launchNavigator(this, list, 1, true, new DemoRoutePlanListener(sNode));
+        }
+    }
+    public class DemoRoutePlanListener implements com.baidu.navisdk.adapter.BaiduNaviManager.RoutePlanListener {
+
+        private BNRoutePlanNode mBNRoutePlanNode = null;
+
+        public DemoRoutePlanListener(BNRoutePlanNode node) {
+            mBNRoutePlanNode = node;
+        }
+
+        @Override
+        public void onJumpToNavigator() {
+			/*
+			 * 设置途径点以及resetEndNode会回调该接口
+			 */
+
+            for (Activity ac : activityList) {
+
+                if (ac.getClass().getName().endsWith("BNDemoGuideActivity")) {
+
+                    return;
+                }
+            }
+            Intent intent = new Intent(MainActivity.this, BNDemoGuideActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(ROUTE_PLAN_NODE, (BNRoutePlanNode) mBNRoutePlanNode);
+            intent.putExtras(bundle);
+            startActivity(intent);
+
+        }
+
+        @Override
+        public void onRoutePlanFailed() {
+            // TODO Auto-generated method stub
+            Toast.makeText(MainActivity.this, "算路失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+    /**
      * 改变地图类型，普通地图或卫星地图
      */
     private void changeMapType()
@@ -857,10 +1029,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         tabMe.setOnClickListener(this);
         isBottomClickable = true;
     }
-    public void createSoilSampleDir()
+    public boolean createSoilSampleDir()
     {
         SDFileHelper sdFileHelper = new SDFileHelper(MainActivity.this);
         sdFileHelper.createDirOnSD();
+        return true;
     }
 
     /**

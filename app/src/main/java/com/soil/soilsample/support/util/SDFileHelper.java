@@ -14,6 +14,8 @@ import java.io.IOException;
  */
 public class SDFileHelper {
     private Context mContext;
+    private String mSDCardPath = null;
+    public static final String APP_FOLDER_NAME = "SoilSample";
     public SDFileHelper(Context context)
     {
         super();
@@ -55,9 +57,34 @@ public class SDFileHelper {
         return sb.toString();
     }
     /*
-   * 在SD卡中创建SoilSampling目录
+   * 在SD卡中创建SoilSample目录
    * */
-    public void createDirOnSD()
+    public boolean createDirOnSD()
+    {
+        mSDCardPath = getSdcardDir();
+        if (mSDCardPath == null) {
+            return false;
+        }
+        File f = new File(mSDCardPath, APP_FOLDER_NAME);
+        if (!f.exists()) {
+            try {
+                f.mkdir();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    private String getSdcardDir() {
+        if (Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED)) {
+            return Environment.getExternalStorageDirectory().toString();
+        }
+        return null;
+    }
+    public void createDirOnSDcard()
     {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
         {

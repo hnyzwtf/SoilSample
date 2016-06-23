@@ -45,6 +45,9 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="kEuAEvnGwqMzegSHAsiOeliv0QSiKGmY" />
+        <meta-data
+            android:value="47f86a84d1082d19a3c32353ce9ed2f3"
+            android:name="BUG_HD_SDK_GENERAL_KEY" />
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">
         </service>
         <activity android:name=".ui.main.MainActivity"

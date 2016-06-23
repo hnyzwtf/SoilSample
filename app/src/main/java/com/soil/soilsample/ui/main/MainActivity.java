@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +51,7 @@ import com.soil.soilsample.R;
 import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
 import com.soil.soilsample.model.CoordinateAlterSample;
+import com.soil.soilsample.model.FirVersionJson;
 import com.soil.soilsample.support.kml.ReadKml;
 import com.soil.soilsample.support.util.CoorToBaidu;
 import com.soil.soilsample.support.util.SDFileHelper;
@@ -68,6 +71,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import im.fir.sdk.FIR;
+import im.fir.sdk.VersionCheckCallback;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, FileBrowserFragment.OnFileAndFolderFinishListener,
         BaiduMap.OnMarkerClickListener, BaiduMap.OnMapClickListener{
@@ -138,6 +144,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             copySampleKmlToSD();
             initNavi();
         }
+        checkForUpdate();
     }
     private void initView()
     {
@@ -740,7 +747,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             @Override
             public void onAuthResult(int status, String msg) {
                 if (0 == status) {
-                    //authinfo = "key校验成功!";
+                    authinfo = "key校验成功!";
                 } else {
                     authinfo = "key校验失败, " + msg;
                 }
@@ -748,13 +755,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, authinfo, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MainActivity.this, authinfo, Toast.LENGTH_LONG).show();
                     }
                 });
             }
 
             public void initSuccess() {
-                Toast.makeText(MainActivity.this, "百度导航引擎初始化成功", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "百度导航引擎初始化成功", Toast.LENGTH_SHORT).show();
                 initSetting();
             }
 
@@ -1066,6 +1073,58 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 }
             }
         }).start();
+    }
+    private void checkForUpdate()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FIR.checkForUpdateInFIR("0af9a8d6b274efd326d0c5bec3f48bf3", new VersionCheckCallback() {
+                    @Override
+                    public void onSuccess(String versionJson) {
+                        //Log.i("fir","check from fir.im success! " + "\n" + versionJson);
+                        Gson gson = new Gson();
+                        final FirVersionJson firJson = gson.fromJson(versionJson, FirVersionJson.class);
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                        dialog.setTitle("检测到新版本" +" "+ firJson.getVersionShort());
+                        dialog.setMessage(firJson.getChangeLog());
+                        dialog.setCancelable(true);
+                        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Uri uri = Uri.parse(firJson.getUpdataUrl());
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                            }
+                        });
+                        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        dialog.show();
+                    }
+
+                    @Override
+                    public void onFail(Exception e) {
+                        Log.i("fir", "check fir.im fail! " + "\n" + e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onStart() {
+                        //Toast.makeText(getApplicationContext(), "正在获取", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        //Toast.makeText(getApplicationContext(), "获取完成", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).start();
+
     }
 //    @Override
 //    public void onBackPressed() {

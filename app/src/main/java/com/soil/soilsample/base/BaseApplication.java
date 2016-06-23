@@ -3,6 +3,8 @@ package com.soil.soilsample.base;
 import android.app.Application;
 import android.content.Context;
 
+import im.fir.sdk.FIR;
+
 /**
  * obtain the app's context.
  */
@@ -18,6 +20,7 @@ public class BaseApplication extends Application {
         port = 8181;
         connTimeOut = 15*1000;
         super.onCreate();
+        FIR.init(this);
         context = getApplicationContext();
     }
     public static Context getContext()

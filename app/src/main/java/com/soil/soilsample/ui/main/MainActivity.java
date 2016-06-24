@@ -47,6 +47,7 @@ import com.baidu.navisdk.adapter.BNaviSettingManager;
 import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.soil.soilsample.BuildConfig;
 import com.soil.soilsample.R;
 import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
@@ -1076,34 +1077,42 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
     private void checkForUpdate()
     {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
+                final int versionCode = BuildConfig.VERSION_CODE;
                 FIR.checkForUpdateInFIR("0af9a8d6b274efd326d0c5bec3f48bf3", new VersionCheckCallback() {
                     @Override
                     public void onSuccess(String versionJson) {
                         //Log.i("fir","check from fir.im success! " + "\n" + versionJson);
                         Gson gson = new Gson();
                         final FirVersionJson firJson = gson.fromJson(versionJson, FirVersionJson.class);
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-                        dialog.setTitle("检测到新版本" +" "+ firJson.getVersionShort());
-                        dialog.setMessage(firJson.getChangeLog());
-                        dialog.setCancelable(true);
-                        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Uri uri = Uri.parse(firJson.getUpdataUrl());
-                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                startActivity(intent);
-                            }
-                        });
-                        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        String versionCodeOnFir = firJson.getVersion();
+                        //如果fir服务器上的版本号大于本程序的版本号，就提示升级
+                        if (Integer.parseInt(versionCodeOnFir) > versionCode)
+                        {
 
-                            }
-                        });
-                        dialog.show();
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+                            dialog.setTitle("检测到新版本" +" "+ firJson.getVersionShort());
+                            dialog.setMessage(firJson.getChangeLog());
+                            dialog.setCancelable(true);
+                            dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Uri uri = Uri.parse(firJson.getUpdataUrl());
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                    startActivity(intent);
+                                }
+                            });
+                            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            dialog.show();
+                        }
                     }
 
                     @Override
@@ -1126,6 +1135,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         }).start();
 
     }
+
 //    @Override
 //    public void onBackPressed() {
 //        if (doubleBackToExitOnce)

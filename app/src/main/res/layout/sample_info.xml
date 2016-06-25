@@ -89,42 +89,7 @@
                 android:layout_marginLeft="5.0dip"
                 android:layout_weight="7.0" />
         </LinearLayout>
-        <!-- html comment -->
-        <LinearLayout
-            android:padding="@dimen/space_10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-            <LinearLayout
-                android:layout_width="0.0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="3.0"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/tv_sample_comment"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_16"
 
-                    android:text="@string/sample_comment"/>
-                <Button
-                    android:id="@+id/btn_sample_htmlComment"
-                    android:background="@drawable/c_html_comment"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_marginTop="5dp"/>
-
-            </LinearLayout>
-            <EditText
-                android:id="@+id/edit_sample_htmlComment"
-                android:maxLines="3"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="7.0"/>
-
-        </LinearLayout>
         <!-- change marker icon-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -179,6 +144,17 @@
             <TextView
                 style="@style/option_item_text"
                 android:text="@string/export_altersamples"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/rl_sample_htmlComment"
+            style="@style/option_item_rl">
+            <ImageView
+                style="@style/option_item_img"
+                android:background="@drawable/html_comment"/>
+            <TextView
+                style="@style/option_item_text"
+                android:text="@string/sample_comment"/>
 
         </LinearLayout>
     </LinearLayout>

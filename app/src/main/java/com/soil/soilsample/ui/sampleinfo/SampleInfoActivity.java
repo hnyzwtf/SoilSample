@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -32,9 +31,8 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     private Toolbar toolbar;
     private LinearLayout exportAlterSamples;
     private LinearLayout calcAlterSample;
+    private LinearLayout sampleHtmlCommentBtn;
     private ImageButton samplePicBtn;
-    private EditText sampleHtmlCommentText;
-    private Button sampleHtmlCommentBtn;
 
     private EditText sampleNameText;
     private EditText sampleLatitudeText;
@@ -71,8 +69,7 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         exportAlterSamples = (LinearLayout) findViewById(R.id.rl_export_altersamples);
         calcAlterSample = (LinearLayout) findViewById(R.id.rl_calc_alterSample);
         samplePicBtn = (ImageButton) findViewById(R.id.imgBtn_sample_pic);
-        sampleHtmlCommentText = (EditText) findViewById(R.id.edit_sample_htmlComment);
-        sampleHtmlCommentBtn = (Button) findViewById(R.id.btn_sample_htmlComment);
+        sampleHtmlCommentBtn = (LinearLayout) findViewById(R.id.rl_sample_htmlComment);
         sampleNameText = (EditText) findViewById(R.id.edit_sample_name);
         sampleLatitudeText = (EditText) findViewById(R.id.edit_sample_lat);
         sampleLongitudeText = (EditText) findViewById(R.id.edit_sample_lng);
@@ -107,7 +104,6 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         sampleNameText.setText(markerName);
         sampleLatitudeText.setText(markerLat);
         sampleLongitudeText.setText(markerLng);
-        sampleHtmlCommentText.setText(markerHtmlComment);
 
     }
     private void initSamplePicBtnImage()
@@ -128,7 +124,7 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId())
         {
-            case R.id.btn_sample_htmlComment:
+            case R.id.rl_sample_htmlComment:
                 Intent intentToHtmlComment = new Intent(SampleInfoActivity.this, HtmlCommentActivity.class);
                 intentToHtmlComment.putExtra("htmlComment", markerHtmlComment);
                 startActivity(intentToHtmlComment);

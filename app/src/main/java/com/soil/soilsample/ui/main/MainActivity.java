@@ -103,6 +103,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private String authinfo = null;
     public static List<Activity> activityList = new LinkedList<Activity>();
     public static final String ROUTE_PLAN_NODE = "routePlanNode";
+    private int initBaiduNaviSuccess = 0;//1表示初始化百度导航成功，0表示失败
     // ReadKml
     private ReadKml readKml = null;
     // 点击某个marker后，从底部弹出的布局
@@ -228,8 +229,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 intentToSampleInfoActivity();
                 break;
             case R.id.mark_navi_layout:
+
                 if (BaiduNaviManager.isNaviInited()) {
+                    ToastUtil.show(MainActivity.this, "百度导航引擎初始化成功，即将为您导航");
                     routeplanToNavi();
+                }
+                else
+                {
+                    ToastUtil.show(MainActivity.this, "百度导航引擎初始化失败！");
                 }
                 break;
             case R.id.tab_edit:
@@ -764,6 +771,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             public void initSuccess() {
                 //Toast.makeText(MainActivity.this, "百度导航引擎初始化成功", Toast.LENGTH_SHORT).show();
                 initSetting();
+                initBaiduNaviSuccess = 1;
             }
 
             public void initStart() {

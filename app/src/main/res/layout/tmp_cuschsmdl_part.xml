@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/tmp_id_lyt_cusmdl"
+                android:layout_width="wrap_content"
+                android:layout_height="500dp"
+                android:background="@drawable/transparent" >
+    <LinearLayout
+        android:id="@+id/tmp_id_lyt_cusmdl_spinner"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="7dp" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1~3层为必选，\n4~7层为可选"
+            android:gravity="center"
+            android:layout_marginBottom="3dp"
+            android:textColor="#CC9966" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#D8D0C6" >
+            <RelativeLayout
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:id="@+id/tmp_id_one_ly" >
+                <TextView
+                    android:text="第1层"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+                <Spinner
+                    android:id="@+id/tmp_id_one_lyr"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/tmp_id_two_ly"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tmp_id_one_ly" >
+                <TextView
+                    android:text="第2层"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+                <Spinner
+                    android:layout_width="140dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/tmp_id_two_lyr"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/tmp_id_three_ly"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tmp_id_two_ly" >
+                <TextView
+                    android:text="第3层"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+                <Spinner
+                    android:layout_width="140dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/tmp_id_three_lyr"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/tmp_id_four_ly"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tmp_id_three_ly" >
+                <TextView
+                    android:text="第4层"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+                <Spinner
+                    android:layout_width="140dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/tmp_id_four_lyr"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/tmp_id_five_ly"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tmp_id_four_ly" >
+                <TextView
+                    android:text="第5层"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+                <Spinner
+                    android:id="@+id/tmp_id_five_lyr"
+                    android:layout_width="140dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/tmp_id_six_ly"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tmp_id_five_ly" >
+                <TextView
+                    android:text="第6层"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+                <Spinner
+                    android:id="@+id/tmp_id_six_lyr"
+                    android:layout_width="140dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/tmp_id_seven_ly"
+                android:layout_width="130dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/tmp_id_six_ly" >
+                <TextView
+                    android:text="第7层"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+                <Spinner
+                    android:id="@+id/tmp_id_seven_lyr"
+                    android:layout_width="140dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+        </RelativeLayout>
+        <Button
+            android:id="@+id/tmp_id_cfm_chs"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center"
+            android:background="#A17C59"
+            android:text="确定"
+            android:textColor="#ffffff"/>
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/tmp_id_input_name_ly"
+        android:layout_width="70dp"
+        android:layout_height="500dp"
+        android:visibility="gone"
+        android:layout_toRightOf="@id/tmp_id_lyt_cusmdl_spinner"  >
+        <EditText
+            android:id="@+id/tmp_id_input_name_one"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="70dp"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            android:background="#D8D0C6"
+            android:hint="请输入层名" />
+        <TextView
+            android:layout_above="@id/tmp_id_input_name_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请输入层名"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="#CC9966" />
+        <EditText
+            android:id="@+id/tmp_id_input_name_two"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="35dp"
+            android:visibility="invisible"
+            android:layout_below="@id/tmp_id_input_name_one"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入层名"/>
+        <EditText
+            android:id="@+id/tmp_id_input_name_three"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="35dp"
+            android:visibility="invisible"
+            android:layout_below="@id/tmp_id_input_name_two"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入层名" />
+        <EditText
+            android:id="@+id/tmp_id_input_name_four"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:layout_below="@id/tmp_id_input_name_three"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入层名" />
+        <EditText
+            android:id="@+id/tmp_id_input_name_five"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:background="#D8D0C6"
+            android:layout_below="@id/tmp_id_input_name_four"
+            android:textSize="12sp"
+            android:hint="请输入层名" />
+        <EditText
+            android:id="@+id/tmp_id_input_name_six"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:layout_below="@id/tmp_id_input_name_five"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入层名" />
+        <EditText
+            android:id="@+id/tmp_id_input_name_seven"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:background="#D8D0C6"
+            android:layout_below="@id/tmp_id_input_name_six"
+            android:textSize="12sp"
+            android:hint="请输入层名" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/tmp_id_input_depth_ly"
+        android:layout_width="50dp"
+        android:layout_height="500dp"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"
+        android:layout_toRightOf="@id/tmp_id_input_name_ly"  >
+        <EditText
+            android:id="@+id/tmp_id_input_depth_one"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="70dp"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            android:background="#D8D0C6"
+            android:hint="请输入高度" />
+        <TextView
+            android:layout_above="@id/tmp_id_input_depth_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请输入高度\n(cm)"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="3dp"
+            android:textColor="#CC9966" />
+        <EditText
+            android:id="@+id/tmp_id_input_depth_two"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="35dp"
+            android:visibility="invisible"
+            android:layout_below="@id/tmp_id_input_depth_one"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入高度"/>
+        <EditText
+            android:id="@+id/tmp_id_input_depth_three"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="35dp"
+            android:visibility="invisible"
+            android:layout_below="@id/tmp_id_input_depth_two"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入高度" />
+        <EditText
+            android:id="@+id/tmp_id_input_depth_four"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:layout_below="@id/tmp_id_input_depth_three"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入高度" />
+        <EditText
+            android:id="@+id/tmp_id_input_depth_five"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:background="#D8D0C6"
+            android:layout_below="@id/tmp_id_input_depth_four"
+            android:textSize="12sp"
+            android:hint="请输入高度" />
+        <EditText
+            android:id="@+id/tmp_id_input_depth_six"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:layout_below="@id/tmp_id_input_depth_five"
+            android:background="#D8D0C6"
+            android:textSize="12sp"
+            android:hint="请输入高度" />
+        <EditText
+            android:id="@+id/tmp_id_input_depth_seven"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:visibility="invisible"
+            android:layout_marginTop="35dp"
+            android:background="#D8D0C6"
+            android:layout_below="@id/tmp_id_input_depth_six"
+            android:textSize="12sp"
+            android:hint="请输入高度" />
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/id_left"
+        android:layout_width="wrap_content"
+        android:layout_height="500dp"
+        android:layout_gravity="center_vertical"
+        android:layout_toRightOf="@id/tmp_id_input_depth_ly"
+        android:src="@drawable/gallery_button_left"/>
+</RelativeLayout>
+

@@ -13,6 +13,9 @@
     <string name="environ_variable">环境因子选择</string>
     <string name="similarity_model">相似度模型选择</string>
     <string name="add_sample">添加样点数据</string>
+    <!-- 土壤剖面页面-->
+    <string name="take_photo">记录土壤剖面</string>
+    <string name="local_profile">查看本地土壤剖面</string>
     <!-- 设置页面 -->
     <string name="set">设置</string>
     <string name="exit">退出</string>
@@ -67,7 +70,7 @@
     <string name="tip_network_error">没有可用的网络</string>
 
     <!-- 首页面 -->
-    <string name="tab_edit">编辑</string>
+    <string name="tab_soil">土壤</string>
     <string name="tab_favorite">收藏</string>
     <string name="tab_function">功能</string>
     <string name="tab_more">我</string>

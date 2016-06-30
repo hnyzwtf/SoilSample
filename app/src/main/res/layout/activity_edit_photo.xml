@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="#000000"
+              android:orientation="vertical">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ImageView
+        android:id="@+id/id_img_edit_photo"
+        android:layout_width="match_parent"
+        android:layout_height="475dp"
+        android:background="#000000"
+        android:layout_below="@id/appbar"/>
+
+    <!-- 上面主页面 -->
+    <FrameLayout
+        android:id="@+id/frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="475dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:layout_below="@id/appbar">
+    </FrameLayout>
+
+
+    <!-- 底部的菜单 -->
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#404040" >
+
+        <Button
+            android:id="@+id/id_cus_chs_mdl"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="自定义剖面图"
+            android:textColor="@drawable/bottom_btn"
+            android:textSize="14sp"
+            android:background="@android:color/transparent"  />
+
+        <Button
+            android:id="@+id/id_chs_mdl"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="选择现有剖面图"
+            android:textColor="@drawable/bottom_btn"
+            android:textSize="14sp"
+            android:background="@android:color/transparent" />
+
+        <Button
+            android:id="@+id/id_custom_draw"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="手绘土壤剖面图"
+            android:textColor="@drawable/bottom_btn"
+            android:textSize="14sp"
+            android:background="@android:color/transparent"  />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@android:color/transparent"
+        android:id="@+id/button"/>
+    <include
+        layout="@layout/tmp_chsmdl_tool"
+        android:id="@+id/tmp_chsmdl_tool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/tmp_cuschsmdl_tool"
+        android:id="@+id/tmp_cuschsmdl_tool"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/tmp_mdls_part"
+        android:id="@+id/tmp_mdls_part"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tmp_chsmdl_tool"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/tmp_cuschsmdl_part"
+        android:id="@+id/tmp_cuschsmdl_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:layout_alignParentLeft="true" />
+
+    <include
+        layout="@layout/tmp_cusdr_bar"
+        android:id="@+id/tmp_cusdr_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" />
+</RelativeLayout>

@@ -8,8 +8,8 @@ android {
         applicationId "com.soil.soilsample"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 3
-        versionName "2.0.2"
+        versionCode 4
+        versionName "2.1.0"
     }
     buildTypes {
         release {
@@ -17,6 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
     sourceSets {
         main {
 
@@ -37,4 +38,6 @@ dependencies {
     compile files('libs/BaiduNaviSDK_3.1.1.jar')
     compile files('libs/httpmime-4.1.2.jar')
     compile 'im.fir:fir-sdk:latest.integration@aar'
+    compile 'org.apache.httpcomponents:httpcore:4.4.1'
+    compile 'org.apache.httpcomponents:httpclient:4.5'
 }

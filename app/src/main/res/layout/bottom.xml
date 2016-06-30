@@ -12,26 +12,26 @@
         android:baselineAligned="false">
         <LinearLayout
             android:layout_marginTop="3dp"
-            android:id="@+id/tab_edit"
+            android:id="@+id/tab_soil"
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1">
             <ImageButton
-                android:id="@+id/tab_edit_img"
+                android:id="@+id/tab_soil_img"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/activity_main_tab_image_size"
                 android:scaleType="centerInside"
                 android:clickable="false"
-                android:src="@drawable/edit"
+                android:src="@drawable/icon_soil"
                 android:background="#00000000"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textSize="@dimen/activity_main_tab_text_size"
-                android:text="@string/tab_edit"/>
+                android:text="@string/tab_soil"/>
         </LinearLayout>
         <LinearLayout
             android:layout_marginTop="3dp"

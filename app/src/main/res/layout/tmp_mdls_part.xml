@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/tmp_id_lyt_chsmdl"
+              android:layout_width="match_parent"
+              android:layout_height="150dp"
+              android:layout_above="@id/tmp_id_btm_menu"
+              android:orientation="vertical"
+              android:background="@drawable/transparent_backgroud_frame" >
+
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="110dp"
+        android:layout_marginTop="8dp" >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp" >
+            <Button
+                android:id="@+id/tmp_id_mdl_1"
+                android:layout_width="70dp"
+                android:layout_height="90dp"
+                android:text="山地黄壤1"
+                android:textSize="12sp"
+                android:textColor="#ffffff"
+                android:gravity="bottom|center_horizontal"
+                android:background="@drawable/yellow_one" />
+            <Button
+                android:id="@+id/tmp_id_mdl_2"
+                android:layout_width="70dp"
+                android:layout_height="90dp"
+                android:layout_toRightOf="@id/tmp_id_mdl_1"
+                android:text="山地黄壤2"
+                android:textSize="12sp"
+                android:textColor="#ffffff"
+                android:gravity="bottom|center_horizontal"
+                android:background="@drawable/yello_two"
+                android:layout_marginLeft="8dp" />
+            <Button
+                android:id="@+id/tmp_id_mdl_3"
+                android:layout_width="70dp"
+                android:layout_height="90dp"
+                android:layout_toRightOf="@id/tmp_id_mdl_2"
+                android:text="山地黄壤3"
+                android:textSize="12sp"
+                android:textColor="#ffffff"
+                android:gravity="bottom|center_horizontal"
+                android:background="@drawable/yello_three"
+                android:layout_marginLeft="8dp" />
+            <Button
+                android:id="@+id/tmp_id_mdl_4"
+                android:layout_width="70dp"
+                android:layout_height="90dp"
+                android:layout_toRightOf="@id/tmp_id_mdl_3"
+                android:text="山地黄棕壤"
+                android:textSize="12sp"
+                android:textColor="#ffffff"
+                android:gravity="bottom|center_horizontal"
+                android:background="@drawable/brown_soil"
+                android:layout_marginLeft="8dp" />
+            <Button
+                android:id="@+id/tmp_id_mdl_5"
+                android:layout_width="70dp"
+                android:layout_height="90dp"
+                android:layout_toRightOf="@id/tmp_id_mdl_4"
+                android:text="山地棕壤"
+                android:textSize="12sp"
+                android:textColor="#ffffff"
+                android:gravity="bottom|center_horizontal"
+                android:background="@drawable/yello_brown"
+                android:layout_marginLeft="8dp" />
+        </RelativeLayout>
+    </HorizontalScrollView>
+</LinearLayout>

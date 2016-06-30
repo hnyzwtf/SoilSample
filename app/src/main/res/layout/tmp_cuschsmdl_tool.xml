@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/tmp_id_btm_menu"
+              android:layout_width="match_parent"
+              android:layout_height="60dp"
+              android:layout_alignParentBottom="true"
+              android:background="#404040"
+              android:gravity="bottom" >
+    <Button
+        android:id="@+id/tmp_id_cus_cancel_mdl"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        style="@style/TitleButton"
+        android:text="取消" />
+    <Button
+        android:id="@+id/tmp_id_menu_cuschs_mdl"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="match_parent"
+        style="@style/TitleButton"
+        android:text="自定义剖面" />
+    <Button
+        android:id="@+id/tmp_id_cus_ok_mdl"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        style="@style/TitleButton"
+        android:text="确定" />
+</LinearLayout>
+

@@ -74,4 +74,11 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+    <style
+        name="TitleButton" >
+        <item  name="android:textColor">@drawable/bottom_btn</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
 </resources>

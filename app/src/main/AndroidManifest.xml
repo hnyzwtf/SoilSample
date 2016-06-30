@@ -71,6 +71,16 @@
         <activity android:name=".ui.sampleinfo.AlterSampleInfoActivity"/>
         <activity android:name=".ui.sampleinfo.AlterParamsFCMActivity"/>
         <activity android:name=".ui.main.BNDemoGuideActivity"/>
+        <activity android:name="com.soil.profile.ui.SoilProfileActivity"/>
+        <activity android:name="com.soil.profile.ui.ActivityAttributeHome"/>
+        <activity android:name="com.soil.profile.ui.ActivityAttributeProperties"/>
+        <activity android:name="com.soil.profile.ui.ActivityBaiduMap"/>
+        <activity android:name="com.soil.profile.ui.ActivityEditPhoto"/>
+        <activity android:name="com.soil.profile.ui.ActivityImageDetail"/>
+        <activity android:name="com.soil.profile.ui.LoadProfileExistedActivity"/>
+        <activity android:name="com.soil.profile.ui.TableAttrProperActivity"/>
+        <activity android:name="com.soil.profile.ui.TableAttrRecActivity"/>
+        <activity android:name="com.soil.profile.ui.UpdateTableAttrProperActivity"/>
     </application>
 
 </manifest>

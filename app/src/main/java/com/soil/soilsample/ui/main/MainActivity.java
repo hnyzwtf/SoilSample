@@ -47,6 +47,7 @@ import com.baidu.navisdk.adapter.BNaviSettingManager;
 import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.soil.profile.ui.SoilProfileActivity;
 import com.soil.soilsample.BuildConfig;
 import com.soil.soilsample.R;
 import com.soil.soilsample.base.BaseActivity;
@@ -112,7 +113,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private TextView markNaviLayout;//marker导航
     // 底部导航栏布局
     private LinearLayout bottomNaviLayout;
-    private LinearLayout tabEdit;
+    private LinearLayout tabSoil;
     private LinearLayout tabFavorite;
     private LinearLayout tabFunction;
     private LinearLayout tabMe;
@@ -161,7 +162,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         markDetailLayout = (TextView) findViewById(R.id.mark_detail_layout);
         markNaviLayout = (TextView) findViewById(R.id.mark_navi_layout);
         bottomNaviLayout = (LinearLayout) findViewById(R.id.bottom_navibar);
-        tabEdit = (LinearLayout) findViewById(R.id.tab_edit);
+        tabSoil = (LinearLayout) findViewById(R.id.tab_soil);
         tabFavorite = (LinearLayout) findViewById(R.id.tab_favorite);
         tabFunction = (LinearLayout) findViewById(R.id.tab_function);
         tabMe = (LinearLayout) findViewById(R.id.tab_me);
@@ -174,7 +175,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         selectLocationMode.setOnClickListener(this);
         markDetailLayout.setOnClickListener(this);
         markNaviLayout.setOnClickListener(this);
-        tabEdit.setOnClickListener(this);
+        tabSoil.setOnClickListener(this);
         tabFavorite.setOnClickListener(this);
         tabFunction.setOnClickListener(this);
         tabMe.setOnClickListener(this);
@@ -239,7 +240,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     ToastUtil.show(MainActivity.this, "百度导航引擎初始化失败！");
                 }
                 break;
-            case R.id.tab_edit:
+            case R.id.tab_soil:
+                startActivity(new Intent(MainActivity.this, SoilProfileActivity.class));
                 break;
             case R.id.tab_favorite:
                 break;
@@ -1028,7 +1030,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void setBottomLayoutClickFalse()
     {
-        tabEdit.setOnClickListener(null);
+        tabSoil.setOnClickListener(null);
         tabFavorite.setOnClickListener(null);
         tabFunction.setOnClickListener(null);
         tabMe.setOnClickListener(null);
@@ -1039,7 +1041,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void setBottomLayoutClickTrue()
     {
-        tabEdit.setOnClickListener(this);
+        tabSoil.setOnClickListener(this);
         tabFavorite.setOnClickListener(this);
         tabFunction.setOnClickListener(this);
         tabMe.setOnClickListener(this);
@@ -1051,6 +1053,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         sdFileHelper.createDirOnSD();
         return true;
     }
+
 
     /**
      * 在assets目录下存放着一个kml文件，将此kml文件复制到sd/soilsample目录下

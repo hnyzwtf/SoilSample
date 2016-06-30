@@ -1,0 +1,456 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <HorizontalScrollView
+                android:id="@+id/id_tbl_horiz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  >
+                <TableLayout
+                    android:id="@+id/id_tbl_tbly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:background="#ffffff" >
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="#ffffff"  >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:text="土壤剖面记载表"
+                            android:layout_span="8"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textSize="22sp" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="土壤编号"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_num"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none"
+                            android:gravity="center" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="日期"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_date"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="天气"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_weather"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="调查人"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_investigator"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="地点"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_position"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="地形图幅/航(卫)片号"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_sheet_num"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="土壤俗名"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_common_name"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="正式定名"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_formal_name"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="地形"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_terrain"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="海拔高度(m)"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_altitude"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="母质类型"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_prnt_mat_type"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="自然植被"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_nat_veg"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="侵蚀情况"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_erode_stat"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="潜水位及水质"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_phreatic_level_quality"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="土地利用"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_landuse"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="排灌条件"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_irrig_drainage"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="施肥情况"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_ferti_stat"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="人为影响"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_human_effect"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="轮作情况"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_crop_rotat_stat"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="一般产量(公斤/亩)"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <EditText
+                            android:id="@+id/id_tbl_yield"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"
+                            android:layout_span="3" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="土壤剖面综合评述"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="25dp"
+                            android:paddingBottom="25dp"
+                            android:background="@drawable/table_frame_btm"/>
+                        <EditText
+                            android:id="@+id/id_tbl_review"
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:imeOptions="flagNoExtractUi"
+                            android:background="@drawable/table_frame_last"
+                            android:inputType="none"
+                            android:textSize="14sp"
+                            android:layout_span="7" />
+                    </TableRow>
+                </TableLayout>
+            </HorizontalScrollView>
+            <Button
+                android:id="@+id/id_tbl_save"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:background="#D8D0C6"
+                android:text="保存数据且输出为图片"  />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

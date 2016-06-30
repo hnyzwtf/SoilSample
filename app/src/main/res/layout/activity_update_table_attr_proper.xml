@@ -1,0 +1,388 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"  >
+                <TableLayout
+                    android:id="@+id/id_upd_prop_tbl_tbly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:background="#ffffff" >
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:background="#ffffff"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"   >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:text="土壤剖面性状记录表"
+                            android:layout_span="17"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textSize="22sp" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="层次"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="深度\n(cm)"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <LinearLayout
+                            android:layout_width="160dp"
+                            android:layout_span="2"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical" >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="颜色"
+                                android:padding="10dp"
+                                android:background="@drawable/table_frame"  />
+                            <TableRow
+                                android:layout_width="160dp"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" >
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="干"
+                                    android:padding="10dp"
+                                    android:background="@drawable/table_frame"  />
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="润"
+                                    android:padding="10dp"
+                                    android:background="@drawable/table_frame"  />
+                            </TableRow>
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="干湿度"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="质地"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="结构"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="松紧度"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="孔隙"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_span="3"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical" >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="新生体"
+                                android:padding="10dp"
+                                android:background="@drawable/table_frame"  />
+                            <TableRow
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" >
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="种类"
+                                    android:padding="10dp"
+                                    android:background="@drawable/table_frame"  />
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="形态"
+                                    android:padding="10dp"
+                                    android:background="@drawable/table_frame"  />
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="数量"
+                                    android:padding="10dp"
+                                    android:background="@drawable/table_frame"  />
+                            </TableRow>
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="侵入体"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="根系"
+                            android:padding="10dp"
+                            android:background="@drawable/table_frame"  />
+                        <LinearLayout
+                            android:layout_width="160dp"
+                            android:layout_span="2"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical" >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="野外测定"
+                                android:padding="10dp"
+                                android:background="@drawable/table_frame_rt"  />
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1" >
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="pH"
+                                    android:padding="10dp"
+                                    android:background="@drawable/table_frame"  />
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:text="石灰反应"
+                                    android:padding="5dp"
+                                    android:background="@drawable/table_frame_rt"  />
+                            </TableRow>
+                        </LinearLayout>
+
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:focusable="false"
+                        android:focusableInTouchMode="true"  >
+                        <EditText
+                            android:id="@+id/id_upd_tbl_layer"
+                            android:layout_width="120dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_depth"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none"/>
+                        <EditText
+                            android:id="@+id/id_upd_tbl_color_dry"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_color_wet"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_humidity"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_texture"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_structure"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_compactness"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_porosity"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:imeOptions="flagNoExtractUi"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_newGrowth_class"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_newGrowth_morphology"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_newGrowth_number"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_intrusion"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_rootSys"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:imeOptions="flagNoExtractUi"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_meas_PH"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                        <EditText
+                            android:id="@+id/id_upd_tbl_meas_limy_react"
+                            android:layout_width="80dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/table_frame_rt"
+                            android:gravity="center"
+                            android:imeOptions="flagNoExtractUi"
+                            android:textSize="14sp"
+                            android:inputType="none" />
+                    </TableRow>
+                </TableLayout>
+            </HorizontalScrollView>
+            <Button
+                android:id="@+id/id_upd_prop_tbl_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:background="#D8D0C6"
+                android:text="保存修改"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -389,11 +389,13 @@ public class AlterParamsFCMActivity extends BaseActivity {
     private void saveAlterSamplesToSharedPrefer()
     {
         clearAlterSamplesListInShared();
-        SharedPreferences.Editor editor = getSharedPreferences("AlterFCMSamplesList", MODE_PRIVATE).edit();
+        //SharedPreferences.Editor editor = getSharedPreferences("AlterFCMSamplesList", MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getSharedPreferences("AlterSamplesList", MODE_PRIVATE).edit();
         Gson gson = new Gson();
         String json = gson.toJson(alterFCMSamples);
         Log.d(TAG, "saved json is "+ json);
         editor.putString(markerName, json);
+        editor.putString("alterMarkerName", markerName);
         editor.commit();
 
     }
@@ -402,14 +404,10 @@ public class AlterParamsFCMActivity extends BaseActivity {
 	* */
     private void clearAlterSamplesListInShared()
     {
-        SharedPreferences preferences = getSharedPreferences("AlterFCMSamplesList", MODE_PRIVATE);
-        String json = preferences.getString(markerName, null);
-        if (json != null)
-        {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.clear();
-            editor.commit();
-        }
+        //SharedPreferences preferences = getSharedPreferences("AlterFCMSamplesList", MODE_PRIVATE);
+        SharedPreferences.Editor editor = getSharedPreferences("AlterSamplesList", MODE_PRIVATE).edit();
+        editor.clear();
+        editor.commit();
 
     }
     private void showDialog()

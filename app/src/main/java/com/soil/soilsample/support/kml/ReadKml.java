@@ -1,5 +1,6 @@
 package com.soil.soilsample.support.kml;
 
+import com.soil.soilsample.R;
 import com.soil.soilsample.model.Coordinate;
 
 import org.dom4j.Document;
@@ -101,6 +102,7 @@ public class ReadKml {
 				coordinate.setX(d_x);
 				coordinate.setY(d_y);
 				coordinate.setName(name);
+				coordinate.setIconId(R.drawable.default_marker);
 				coordinate.setHtmlContent(htmlContent);
             	coordinateList.add(coordinate);//将每一个实例化的对象存储在list中
     		}

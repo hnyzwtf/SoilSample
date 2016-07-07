@@ -457,6 +457,7 @@ public class AlternativeParamsActivity extends BaseActivity{
         String json = gson.toJson(alterSamples);
         //Log.d(TAG, "saved json is "+ json);
         editor.putString(markerName, json);
+        editor.putString("alterMarkerName", markerName);
         editor.commit();
 
     }
@@ -465,14 +466,17 @@ public class AlternativeParamsActivity extends BaseActivity{
     * */
     private void clearAlterSamplesListInShared()
     {
-        SharedPreferences preferences = getSharedPreferences("AlterSamplesList", MODE_PRIVATE);
+        /*SharedPreferences preferences = getSharedPreferences("AlterSamplesList", MODE_PRIVATE);
         String json = preferences.getString(markerName, null);
         if (json != null)
         {
             SharedPreferences.Editor editor = preferences.edit();
             editor.clear();
             editor.commit();
-        }
+        }*/
+        SharedPreferences.Editor editor = getSharedPreferences("AlterSamplesList", MODE_PRIVATE).edit();
+        editor.clear();
+        editor.commit();
 
     }
     private void showDialog()

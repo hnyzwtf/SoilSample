@@ -53,8 +53,9 @@
     <string name="candidate_radius">替代样点距离不可采点(米):</string>
     <string name="hint_candidate_radius">单位(米)</string>
     <!-- 收藏页面 -->
-    <string name="label">标签</string>
-    <string name="deal_with">操作</string>
+    <string name="show">显示</string>
+    <string name="hidden">隐藏</string>
+    <string name="delete">删除</string>
     <!-- htmlcomment -->
     <string name="notes">备注</string>
     <string name="save">保存</string>

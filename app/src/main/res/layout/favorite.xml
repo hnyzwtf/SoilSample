@@ -4,6 +4,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,26 +17,16 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
-
-
-    <LinearLayout
+    <ListView
+        android:id="@+id/favorite_listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-        <LinearLayout
-            android:id="@+id/rl_about_me"
-            style="@style/option_item_rl"
-            android:layout_marginTop="@dimen/space_20">
-            <ImageView
-                style="@style/option_item_img"
-                android:contentDescription="@null"
-                android:background="@drawable/about_me"/>
-            <TextView
-                style="@style/option_item_text"
-                android:text="@string/about_me" />
-        </LinearLayout>
-
-    </LinearLayout>
+    <com.soil.soilsample.ui.empty.EmptyLayout
+        android:id="@+id/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </LinearLayout>

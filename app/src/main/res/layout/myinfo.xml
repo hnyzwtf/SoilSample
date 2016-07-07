@@ -51,7 +51,23 @@
                 style="@style/option_item_text"
                 android:text="@string/set" />
         </LinearLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/list_divider_color"
+            android:visibility="gone" />
+        <LinearLayout
+            android:id="@+id/rl_exit"
+            style="@style/option_item_rl"
+            android:layout_marginTop="@dimen/space_20">
+            <ImageView
+                style="@style/option_item_img"
+                android:contentDescription="@null"
+                android:background="@drawable/icon_exit"/>
+            <TextView
+                style="@style/option_item_text"
+                android:text="@string/exit" />
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

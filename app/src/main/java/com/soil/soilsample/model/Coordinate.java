@@ -10,6 +10,7 @@ import android.os.Parcelable;
 public class Coordinate implements Parcelable {
 	private double x;
 	private double y;
+	private int iconId;
 	private String name;
 	private String htmlContent;
 
@@ -37,7 +38,13 @@ public class Coordinate implements Parcelable {
 	public void setHtmlContent(String htmlContent) {
 		this.htmlContent = htmlContent;
 	}
+	public int getIconId() {
+		return iconId;
+	}
 
+	public void setIconId(int iconId) {
+		this.iconId = iconId;
+	}
 
 	@Override
 	public int describeContents() {
@@ -48,6 +55,7 @@ public class Coordinate implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeDouble(x);
 		dest.writeDouble(y);
+		dest.writeInt(iconId);
 		dest.writeString(name);
 		dest.writeString(htmlContent);
 	}
@@ -59,6 +67,7 @@ public class Coordinate implements Parcelable {
 			Coordinate coor = new Coordinate();
 			coor.x = source.readDouble();
 			coor.y = source.readDouble();
+			coor.iconId = source.readInt();
 			coor.name = source.readString();
 			coor.htmlContent = source.readString();
 			return coor;

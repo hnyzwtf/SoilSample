@@ -17,6 +17,7 @@ import com.soil.soilsample.R;
 import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
 import com.soil.soilsample.model.CoordinateAlterSample;
+import com.soil.soilsample.support.kml.KmlSharedPrefHelper;
 import com.soil.soilsample.support.kml.WriteKml;
 import com.soil.soilsample.support.util.ToastUtil;
 
@@ -38,6 +39,7 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     private EditText sampleLatitudeText;
     private EditText sampleLongitudeText;
 
+    private String markerParentKml;//当前操作的marker所属的kml文件名
     private Boolean isSampleImageChanged = false;//设置一个标识，判断该marker的图标是否被改变
     private Bundle intentBundle;
     private String markerName = "";//声明样点marker的name属性，从intent中获取
@@ -48,6 +50,7 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     private int markerIconId = 0;//从intentFromMainActivity传入的marker的图标
 
     public static int altersampleModel = 0;
+    private static final String TAG = "SampleInfoActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +85,7 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     {
         Intent intentFromMainActivity = getIntent();
         intentBundle = intentFromMainActivity.getBundleExtra("markerInfoBundle");
+        markerParentKml = intentBundle.getString("markerParentKml");
         Coordinate markerCoor = intentBundle.getParcelable("marker_bundle");
         markerName = markerCoor.getName();
         double latitude = markerCoor.getX();
@@ -89,7 +93,8 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         markerHtmlComment = markerCoor.getHtmlContent();
         markerLat = String.valueOf(latitude);
         markerLng = String.valueOf(longitude);
-        markerIconId = intentFromMainActivity.getIntExtra("markerIconId", -1);//当前正在操作的marker的icon
+        //markerIconId = intentFromMainActivity.getIntExtra("markerIconId", -1);//当前正在操作的marker的icon
+        markerIconId = markerCoor.getIconId();
 
     }
     private void initEvents()
@@ -207,6 +212,24 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
                     //将imageSelected，markerName这两个参数返回给MainActivity
                     intentForResult.putExtra("SelectedImage", imageSelected);
                     intentForResult.putExtra("currentMarkerName", markerName);
+                    //将改变的图标及对应的marker写入本地
+                    KmlSharedPrefHelper kmlPrefHelper = KmlSharedPrefHelper.getInstance(SampleInfoActivity.this);
+                    List<Coordinate> coorList = null;
+                    coorList = kmlPrefHelper.getAddedKmlFromShared(markerParentKml);
+
+                   // Log.d(TAG, "onOptionsItemSelected: markerParentKml is " + markerParentKml + ", markerName is " + markerName);
+                    for (int i = 0; i < coorList.size(); i++) {
+                        if (coorList.get(i).getName().equals(markerName))
+                        {
+                            //Log.d(TAG, "onOptionsItemSelected: coorList.get(i).getName() is " + coorList.get(i).getName());
+                            coorList.get(i).setIconId(imageSelected);//存入改变的图片的id
+                        }
+                    }
+
+                    //将更新后的coorList保存下来
+                   // kmlPrefHelper.clearAddedKmlFromShared(markerParentKml);
+                    kmlPrefHelper.saveAddedKmlToShared(markerParentKml, coorList);
+
                     setResult(RESULT_OK, intentForResult);
                     finish();
                 }
@@ -221,19 +244,21 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     }
     private void exportAlterSamples()
     {
-        //先从本地取出可替代样点
-        List<CoordinateAlterSample> alterSamples = null;
 
+        // AlterSamplesList此pref文件对应AlternativeParamsActivity的saveAlterSamplesToSharedPrefer方法
+        // 以及AlterParamsFCMActivity中的saveAlterSamplesToSharedPrefer方法
         SharedPreferences preferences = getSharedPreferences("AlterSamplesList", MODE_PRIVATE);
         String json = preferences.getString(markerName, null);
+        // AlterFCMSamplesList对应AlterParamsFCMActivity中的saveAlterSamplesToSharedPrefer方法
+        /*SharedPreferences preferencesFCM = getSharedPreferences("AlterFCMSamplesList", MODE_PRIVATE);
+        String jsonFCM = preferencesFCM.getString(markerName, null);*/
 
-        SharedPreferences preferencesFCM = getSharedPreferences("AlterFCMSamplesList", MODE_PRIVATE);
-        String jsonFCM = preferencesFCM.getString(markerName, null);
-
-        if (json != null || jsonFCM != null)
+        if (json != null)
         {
             Gson gson = new Gson();
             Type type = new TypeToken<List<CoordinateAlterSample>>(){}.getType();
+            //先从本地取出可替代样点
+            List<CoordinateAlterSample> alterSamples = null;
             alterSamples = new ArrayList<CoordinateAlterSample>();
             alterSamples = gson.fromJson(json, type);
             //调用WriteKml中的方法，写出Kml
@@ -244,6 +269,22 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
                 e.printStackTrace();
             }
         }
+        /*else if (jsonFCM != null)
+        {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<CoordinateAlterSample>>(){}.getType();
+            //先从本地取出可替代样点
+            List<CoordinateAlterSample> alterSamples = null;
+            alterSamples = new ArrayList<CoordinateAlterSample>();
+            alterSamples = gson.fromJson(jsonFCM, type);
+            //调用WriteKml中的方法，写出Kml
+            WriteKml writeKml = new WriteKml();
+            try {
+                writeKml.createKml( markerName + "_FCM", alterSamples);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
         else
         {
             ToastUtil.show(SampleInfoActivity.this, "亲，你还没有计算可替代样点呢~~");

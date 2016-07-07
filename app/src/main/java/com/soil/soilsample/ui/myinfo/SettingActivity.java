@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.soil.soilsample.R;
-import com.soil.soilsample.base.ActivityCollector;
 import com.soil.soilsample.base.BaseActivity;
 
 
@@ -16,7 +15,6 @@ import com.soil.soilsample.base.BaseActivity;
  */
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
     private Toolbar toolbar;
-    private LinearLayout exitFinish;
     private LinearLayout aboutMe;
 
     @Override
@@ -32,11 +30,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_white_24dp);
-        exitFinish = (LinearLayout) findViewById(R.id.rl_exit);
+
         aboutMe = (LinearLayout) findViewById(R.id.rl_about_me);
     }
     private void initEvents() {
-        exitFinish.setOnClickListener(this);
+
         aboutMe.setOnClickListener(this);
 
     }
@@ -45,10 +43,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId())
         {
-            case R.id.rl_exit:
-                finish();
-                ActivityCollector.finishAll();
-                break;
             case R.id.rl_about_me:
                 break;
             default:

@@ -22,6 +22,7 @@ import com.soil.soilsample.base.BaseActivity;
 public class SamplePicSelectActivity extends BaseActivity {
 	private Toolbar toolbar;
 	private GridView samplePicSelect;
+	private static final String TAG = "SamplePicSelect";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +102,7 @@ public class SamplePicSelectActivity extends BaseActivity {
 		
 	}
 	//在gridview中展示的图片，即数据源
+	//第一个图标是默认的图标，他的id是2130837601
 	private Integer[] mImagesIds = {R.drawable.default_marker, R.drawable.marker1, R.drawable.marker2, 
 			R.drawable.marker3, R.drawable.marker4, R.drawable.marker5, R.drawable.marker6, R.drawable.marker7, 
 			R.drawable.marker8, R.drawable.marker9, R.drawable.marker10, R.drawable.marker11, R.drawable.marker12,

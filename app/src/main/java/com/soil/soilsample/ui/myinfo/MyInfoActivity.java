@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.soil.soilsample.R;
+import com.soil.soilsample.base.ActivityCollector;
 import com.soil.soilsample.base.BaseActivity;
 
 /**
@@ -21,6 +22,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
     private Toolbar toolbar;
     private LinearLayout altersampleModel;
     private LinearLayout setLayout;
+    private LinearLayout exitFinish;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +39,13 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_white_24dp);
         altersampleModel = (LinearLayout) findViewById(R.id.rl_altersample_model);
         setLayout = (LinearLayout) findViewById(R.id.rl_set);
+        exitFinish = (LinearLayout) findViewById(R.id.rl_exit);
     }
     private void initEvents()
     {
         altersampleModel.setOnClickListener(this);
         setLayout.setOnClickListener(this);
+        exitFinish.setOnClickListener(this);
     }
     private void saveSetInfoToShared(int sampleModelId)
     {
@@ -104,6 +108,10 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.rl_set:
                 startActivity(new Intent(MyInfoActivity.this, SettingActivity.class));
+                break;
+            case R.id.rl_exit:
+                finish();
+                ActivityCollector.finishAll();
                 break;
             default:
                 break;

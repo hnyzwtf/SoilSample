@@ -22,6 +22,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         serverIP = "222.192.7.122";
+        //serverIP = "223.2.40.14";// 223.2.40.14
         port = 8181;
         connTimeOut = 15*1000;
         super.onCreate();

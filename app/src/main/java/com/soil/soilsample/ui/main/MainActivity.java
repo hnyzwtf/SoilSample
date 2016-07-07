@@ -37,6 +37,7 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
@@ -46,7 +47,6 @@ import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.baidu.navisdk.adapter.BNaviSettingManager;
 import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.soil.profile.ui.SoilProfileActivity;
 import com.soil.soilsample.BuildConfig;
 import com.soil.soilsample.R;
@@ -54,10 +54,12 @@ import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
 import com.soil.soilsample.model.CoordinateAlterSample;
 import com.soil.soilsample.model.FirVersionJson;
+import com.soil.soilsample.support.kml.KmlSharedPrefHelper;
 import com.soil.soilsample.support.kml.ReadKml;
 import com.soil.soilsample.support.util.CoorToBaidu;
 import com.soil.soilsample.support.util.SDFileHelper;
 import com.soil.soilsample.support.util.ToastUtil;
+import com.soil.soilsample.ui.favorite.FavoriteActivity;
 import com.soil.soilsample.ui.function.FunctionActivity;
 import com.soil.soilsample.ui.listener.MyOrientationListener;
 import com.soil.soilsample.ui.myinfo.MyInfoActivity;
@@ -68,7 +70,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -95,6 +96,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private double latitude,longtitude;//定位的经度和纬度
     private MyOrientationListener myOrientationListener;
     // other
+    private KmlSharedPrefHelper kmlPrefHelper = KmlSharedPrefHelper.getInstance(MainActivity.this);
     private boolean doubleBackToExitOnce = false;
     DecimalFormat df = new DecimalFormat("0.000000");
     private String mInitDir = Environment.getExternalStorageDirectory()
@@ -124,11 +126,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private int samplePicChanged = 0;//设置更改后的marker的图片
     // markers集合，kmlMarkers保存所有的从Kml文件中解析来的marker，alterMarkers保存所有的服务器返回的可替代样点坐标marker
     private List<Marker> kmlMarkers = new ArrayList<Marker>();
+    private List<Text> kmlMarkersText = new ArrayList<Text>();//每个marker的textoptions
     private List<Marker> alterMarkers = new ArrayList<Marker>();
     //设置标志位，0表示此marker是从kml文件中得到了，1表示为可替代样点的marker
     private int markerFlag = -1;
     // 设置标志位，判断底部导航栏是否可以点击
     private Boolean isBottomClickable = true;
+    // 显示，隐藏，删除marker，例如4thalter.kmz在地图上marker的状态，他是否在地图上显示（隐藏）了marker
+    private int currentMarkerState = 0;
+    private int currentAlterMarkerState = 0;
+    private static final int MARKER_NO_EDIT = -1;
+    private static final int SHOW_MARKERS = 1;
+    private static final int HIDE_MARKERS = 2;
+    private static final int DELETE_MARKERS = 3;
+    private static final int SAVE_MARKERS = 4;// 保存按钮，主要作用是，当退出程序，再打开程序后，添加过的marker可以直接显示在地图上
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +158,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             copySampleKmlToSD();
             initNavi();
         }
+        showMarkersOnCreate();
+        showAlterMarkersOnCreate();
         checkForUpdate();
+        Log.d(TAG, "onCreate: ");
     }
     private void initView()
     {
@@ -158,6 +172,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         selectMapType = (ImageView) findViewById(R.id.map_type);
         myLocation = (ImageView) findViewById(R.id.my_location);
         selectLocationMode = (ImageView) findViewById(R.id.map_location);
+
         markOverviewLayout = (LinearLayout) findViewById(R.id.mark_overview_layout);
         markDetailLayout = (TextView) findViewById(R.id.mark_detail_layout);
         markNaviLayout = (TextView) findViewById(R.id.mark_navi_layout);
@@ -173,6 +188,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         selectMapType.setOnClickListener(this);
         myLocation.setOnClickListener(this);
         selectLocationMode.setOnClickListener(this);
+
         markDetailLayout.setOnClickListener(this);
         markNaviLayout.setOnClickListener(this);
         tabSoil.setOnClickListener(this);
@@ -207,6 +223,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
+    /**
+     * @param intent
+     * MainActivity设置的启动模式为singleTask，即程序中只会产生一个MainActivity的实例，如此带来的问题就是，无法及时的接收到新的intent传入的数据
+     * 因此，在onNewIntent中通过setIntent来解决
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -244,6 +265,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 startActivity(new Intent(MainActivity.this, SoilProfileActivity.class));
                 break;
             case R.id.tab_favorite:
+                startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
                 break;
             case R.id.tab_function:
                 startActivity(new Intent(MainActivity.this, FunctionActivity.class));
@@ -453,7 +475,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         public void run() {
                             //将本次添加的kml文件名和所有的坐标点保存
                             //saveKmlCoorsToShared(fileName, readKml.getCoordinateList());
-                            
+                            kmlPrefHelper.saveAddedKmlToShared(fileName, readKml.getCoordinateList());
+                            kmlPrefHelper.saveAddedKmlNames(fileName);
                         }
                     }).start();
 
@@ -472,55 +495,68 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     /**
      * 添加marker到地图
      */
-    private void addMarkers(String kmlName, List<Coordinate> coorList)
+    public void addMarkers(String kmlName, List<Coordinate> coorList)
     {
         if (kmlName != null)
         {
-            /*从本地取出保存的marker信息
-            List<Coordinate> marks2 = new ArrayList<Coordinate>();
-            marks2 = getKmlCoorsFromShared(kmlName);*/
-
             List<Coordinate> marks = null;
             marks = coorList;
             myBaiduMap.setOnMapClickListener(this);
             myBaiduMap.setOnMarkerClickListener(this);
             //将marker添加到地图上
-            LatLng sourceLatLng = null;
             LatLng desLatLng = null;
             Marker marker = null;
+           // 每个marker的textoptions属性
+            Text markerText = null;
             OverlayOptions overlayOptions;
-            OverlayOptions textOptions;//文字覆盖物
-            BitmapDescriptor defaultBitmap = BitmapDescriptorFactory.fromResource(R.drawable.default_marker);
+            TextOptions textOptions;//文字覆盖物
+            //默认的marker图标
+            //BitmapDescriptor defaultBitmap = BitmapDescriptorFactory.fromResource(R.drawable.default_marker);
+            BitmapDescriptor markerBitmap = null;
+            //int changedIconId;
             //将地图视图转移到新添加的marker所在的范围
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (int i = 0; i < marks.size(); i++)
             {
                 //将gps坐标转化为百度坐标，kml文件中的坐标为gps坐标
-                sourceLatLng = new LatLng(marks.get(i).getX(), marks.get(i).getY());//getX是纬度，getY是经度
-                CoordinateConverter converter = new CoordinateConverter();
-                converter.from(CoordinateConverter.CoordType.GPS);
-                converter.coord(sourceLatLng);
-                desLatLng = converter.convert();
+                desLatLng = CoorToBaidu.GPS2Baidu09ll(marks.get(i).getX(), marks.get(i).getY());//getX是纬度，getY是经度
                 builder.include(desLatLng);
+                //取出更改的iconId
+                //changedIconId = marks.get(i).getIconId();
+                /*if (changedIconId != 0 && changedIconId != R.drawable.default_marker)
+                {
+                    Log.d(TAG, "addMarkers: icon id is " + changedIconId);
+                    defaultBitmap = BitmapDescriptorFactory.fromResource(changedIconId);
+                    //设置marker属性
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(defaultBitmap).zIndex(6);
+                }else {
+                    //设置marker属性
+                    overlayOptions = new MarkerOptions().position(desLatLng).icon(defaultBitmap).zIndex(6);
+                }*/
+                markerBitmap = BitmapDescriptorFactory.fromResource(marks.get(i).getIconId());
                 //设置marker属性
-                overlayOptions = new MarkerOptions().position(desLatLng).icon(defaultBitmap).zIndex(6);
+                overlayOptions = new MarkerOptions().position(desLatLng).icon(markerBitmap).zIndex(6);
                 marker = (Marker) myBaiduMap.addOverlay(overlayOptions);
-                kmlMarkers.add(marker);
+
+
                 //设置textoptions属性
                 textOptions = new TextOptions().text(marks.get(i).getName())
                         .fontSize(26)
                         .position(desLatLng)
                         .align(TextOptions.ALIGN_RIGHT, TextOptions.ALIGN_TOP);
-                myBaiduMap.addOverlay(textOptions);
+                markerText = (Text) myBaiduMap.addOverlay(textOptions);
                 //long_lat要显示在AlternativeParamsActivity和AlterParamsFCMActivity参数设置页面不可采点坐标上，是需要发送给
                 //服务器的坐标，故经度在前，纬度在后
-                String long_lat = String.valueOf(marks.get(i).getY()) + "," + String.valueOf(marks.get(i).getX());
+                //String long_lat = String.valueOf(marks.get(i).getY()) + "," + String.valueOf(marks.get(i).getX());
                 Bundle bundle = new Bundle();
-                //bundle.putString("marker_gps", long_lat);
+                bundle.putString("markerParentKml", kmlName);//表示当前marker是哪个kml文件的内容
                 bundle.putParcelable("marker_bundle", marks.get(i));
                 marker.setExtraInfo(bundle);
+                markerText.setExtraInfo(bundle);// text
+                kmlMarkers.add(marker);
+                kmlMarkersText.add(markerText);//text
             }
-
+            //kmlPrefHelper.saveKmlShownState(kmlName, true);//当前样点已经成功添加了marker，将其保存下来,true表示已成功添加marker
             LatLngBounds bounds = builder.build();
             MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newLatLngBounds(bounds);
             myBaiduMap.animateMapStatus(mapStatusUpdate);
@@ -531,7 +567,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     /**
      * 添加服务器返回的可替代样点marker到地图
      */
-    private void addAlterMarkers(ArrayList<CoordinateAlterSample> coorList)
+    public void addAlterMarkers(ArrayList<CoordinateAlterSample> coorList)
     {
 
         myBaiduMap.setOnMapClickListener(this);
@@ -563,12 +599,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             latitude = coorList.get(i).getY();
             longitude = coorList.get(i).getX();
             //将gps坐标转化为百度坐标,coorList是服务器返回的可替代坐标，getX是经度，getY是纬度
-            sourceLatLng = new LatLng(latitude, longitude);
-            //Log.d(TAG, "addAlterMarkers: getY is " + String.valueOf(latitude) + "getX is " + String.valueOf(longitude));
-            CoordinateConverter converter = new CoordinateConverter();
-            converter.from(CoordinateConverter.CoordType.GPS);
-            converter.coord(sourceLatLng);
-            desLatLng = converter.convert();
+            desLatLng = CoorToBaidu.GPS2Baidu09ll(latitude, longitude);
 
             alterSampleName = coorList.get(i).getName();
             switch (Integer.parseInt(alterSampleName))
@@ -612,7 +643,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
             marker = (Marker) myBaiduMap.addOverlay(overlayOptions);
 
-            alterMarkers.add(marker);
+
            /* //设置textoptions属性
             textOptions = new TextOptions().text(alterSampleName)
                     .fontSize(26)
@@ -623,6 +654,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             Bundle bundle = new Bundle();
             bundle.putParcelable("alterMarker_bundle", coorList.get(i));
             marker.setExtraInfo(bundle);
+            alterMarkers.add(marker);
         }
 
 
@@ -716,7 +748,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 Bundle bundle = currentMarker.getExtraInfo();
                 Intent intentToSampleInfo = new Intent(MainActivity.this, SampleInfoActivity.class);
                 intentToSampleInfo.putExtra("markerInfoBundle", bundle);
-                intentToSampleInfo.putExtra("markerIconId",samplePicChanged);
+                //intentToSampleInfo.putExtra("markerIconId",samplePicChanged);
                 startActivityForResult(intentToSampleInfo, 0);//requestCode我们设置为0
             }
             if (markerFlag == 1)
@@ -940,6 +972,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 }).show();
     }
+
     @Override
     protected void onStart() {//当Activity调用onStart方法，开启定位,开启方向传感器，即将定位的服务、方向传感器和Activity生命周期绑定在一起
         myBaiduMap.setMyLocationEnabled(true);//开启允许定位
@@ -969,6 +1002,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         super.onResume();
         mMapView.onResume();
         initIntentParams();
+        showHideDelMarkers();//对加载的Kml文件的操作
+        showHideDelAlterMarkers();//对可替代样点的操作
+        Log.d(TAG, "onResume: ");
     }
 
     @Override
@@ -990,39 +1026,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         desLatlng = converter.convert();
         OverlayOptions overlayOptions = new MarkerOptions().position(desLatlng).icon(changedBitmap).zIndex(6);
         myBaiduMap.addOverlay(overlayOptions);
-    }
-    /*
-	* 解析kml成功后，将所有的坐标保存下来
-	* */
-    private void saveKmlCoorsToShared(String kmlNames, List<Coordinate> coorList)
-    {
-        SharedPreferences.Editor editor = getSharedPreferences(kmlNames, MODE_PRIVATE).edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(coorList);
-        editor.putString(kmlNames, json);
-        editor.commit();
-    }
-
-    /**
-     * @param kmlName
-     * @return
-     * 将saveKmlCoorsToShared方法中保存到本地的Kml坐标取出来，存放到list中
-     */
-    private List<Coordinate> getKmlCoorsFromShared(String kmlName)
-    {
-        List<Coordinate> coorList = null;
-        SharedPreferences preferences = getSharedPreferences(kmlName, MODE_PRIVATE);
-        String json = preferences.getString(kmlName, null);
-        if (json != null)
-        {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Coordinate>>(){}.getType();
-            coorList = new ArrayList<Coordinate>();
-            coorList = gson.fromJson(json, type);
-
-        }
-
-        return coorList;
     }
 
     /**
@@ -1147,6 +1150,301 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
+    /**
+     * MainActivity在第一次创建的时候，显示已经保存过的marker
+     */
+    private void showMarkersOnCreate()
+    {
+        SharedPreferences preferences = getSharedPreferences("showHideDelete_pref", MODE_PRIVATE);
+        String selectKmlName = preferences.getString("selectKmlName", null);
+        int dealFlag = preferences.getInt(selectKmlName, 0);
+        currentMarkerState = getCurrentMarkerState(selectKmlName);//获取保存在本地的markerState
+        if (currentMarkerState == SAVE_MARKERS || currentMarkerState == SHOW_MARKERS || currentMarkerState == HIDE_MARKERS)
+        {
+            int count = 0;//计数器，只要计数器大于0，说明当前要显示的kml文件已经在地图上显示了，不用再重新添加了
+            for (int i = 0; i < kmlMarkers.size(); i++) {
+                Marker marker = kmlMarkers.get(i);
+                Bundle bundle = marker.getExtraInfo();
+                String markerParentKml = bundle.getString("markerParentKml");
+                if (markerParentKml.equals(selectKmlName))
+                {
+                    count++;
+                }
+            }
+
+            //如果将要显示的kml没有在地图上显示，且此kml（包括本地的shared文件）没有被删除
+            if (selectKmlName != null && count < 1)
+            {
+                //取出要显示的Kml保存在本地的坐标
+                // 下面这两句话可以直接作为全局变量来使用，不必写在这里
+                List<Coordinate> coorList = null;
+                coorList = kmlPrefHelper.getAddedKmlFromShared(selectKmlName);
+                if (coorList != null)
+                {
+
+                    addMarkers(selectKmlName, coorList);
+                }
+            }
+        }
+    }
+
+    /**
+     * MainActivity在第一次创建的时候，显示已经保存过的alter marker
+     */
+    private void showAlterMarkersOnCreate()
+    {
+        SharedPreferences preferences = getSharedPreferences("showHideDeleteAlter_pref", MODE_PRIVATE);
+        String selectName = preferences.getString("selectName", null);
+        int dealFlag = preferences.getInt(selectName, 0);
+        currentAlterMarkerState = getCurrentAlterMarkerState(selectName);//获取保存在本地的markerState
+        //获取可替代样点的名称，如样点554不可采，我们计算出554的一批可替代样点，并将这批可替代样点显示在地图上，这批可替代样点的名称就是554
+        String alterName = kmlPrefHelper.getAlterMarkerNameFromPref();
+        if (currentAlterMarkerState == SAVE_MARKERS || currentAlterMarkerState == SHOW_MARKERS || currentAlterMarkerState == HIDE_MARKERS)
+        {
+            //如果将要显示的kml没有在地图上显示，且此kml（包括本地的shared文件）没有被删除
+            if (selectName.equals(alterName))
+            {
+                //取出要显示的可替代样点保存在本地的坐标
+                // 下面这两句话可以直接作为全局变量来使用
+                ArrayList<CoordinateAlterSample> coorList = null;
+                coorList = kmlPrefHelper.getAlterCoorsFromPref(selectName);
+                if (coorList != null)
+                {
+                    addAlterMarkers(coorList);
+                }
+            }
+        }
+    }
+    /**
+     * 隐藏，显示，删除kml及其marker，对应FavoriteActivity中的showHideDeleteKml方法
+     * 目前只支持对一个kml文件进行操作，2016/07/05
+     */
+    private void showHideDelMarkers()
+    {
+        SharedPreferences preferences = getSharedPreferences("showHideDelete_pref", MODE_PRIVATE);
+        String selectKmlName = preferences.getString("selectKmlName", null);
+        int dealFlag = preferences.getInt(selectKmlName, 0);
+        currentMarkerState = getCurrentMarkerState(selectKmlName);//获取保存在本地的markerState
+
+        switch (dealFlag)
+        {
+            case HIDE_MARKERS://隐藏marker
+                if (kmlMarkers != null )
+                {
+                    for (int i = 0; i < kmlMarkers.size(); i++) {
+                        Marker marker = kmlMarkers.get(i);
+                        Text markerText = kmlMarkersText.get(i);
+                        Bundle bundle = marker.getExtraInfo();
+                        String markerParentKml = bundle.getString("markerParentKml");
+                        if (markerParentKml.equals(selectKmlName) && marker.isVisible() && markerText.isVisible())
+                        //if (markerParentKml.equals(selectKmlName) && currentMarkerState != HIDE_MARKERS)
+                        {
+                            marker.setVisible(false);
+                            markerText.setVisible(false);
+
+                        }
+                    }
+                    currentMarkerState = HIDE_MARKERS;
+                    saveCurrentMarkerState(selectKmlName, currentMarkerState);
+                }
+                break;
+            case SHOW_MARKERS://显示
+                if (currentMarkerState == HIDE_MARKERS)//如果当前marker的状态是被隐藏的状态，直接设置visible即可
+                {
+                    //如果用户将kml设为隐藏状态，然后退出程序，再打开程序，点击显示，此时的kmlMarkers可能为空，这是一个问题
+                    if (kmlMarkers != null)
+                    {
+                        for (int i = 0; i < kmlMarkers.size(); i++) {
+                            Marker marker = kmlMarkers.get(i);
+                            Text markerText = kmlMarkersText.get(i);
+                            Bundle bundle = marker.getExtraInfo();
+                            String markerParentKml = bundle.getString("markerParentKml");
+                            if (markerParentKml.equals(selectKmlName))
+                            {
+                                marker.setVisible(true);
+                                markerText.setVisible(true);
+                            }
+                        }
+                    }
+
+                    currentMarkerState = SHOW_MARKERS;
+                    saveCurrentMarkerState(selectKmlName, currentMarkerState);
+                }
+                break;
+            case DELETE_MARKERS:
+                deleteMarkersAndPref(selectKmlName);
+                currentMarkerState = MARKER_NO_EDIT;
+                saveCurrentMarkerState(selectKmlName, currentMarkerState);
+                break;
+            case SAVE_MARKERS:
+                currentMarkerState = SAVE_MARKERS;
+                saveCurrentMarkerState(selectKmlName, currentMarkerState);
+                break;
+            default:
+                break;
+        }
+    }
+    /**
+     * 隐藏，显示，删除altermarker，对应FavoriteActivity中的showHideDeleteAlter方法
+     * 目前只支持对一个kml文件进行操作，2016/07/05
+     */
+    private void showHideDelAlterMarkers()
+    {
+        SharedPreferences preferences = getSharedPreferences("showHideDeleteAlter_pref", MODE_PRIVATE);
+        String selectName = preferences.getString("selectName", null);
+        int dealFlag = preferences.getInt(selectName, 0);
+        currentAlterMarkerState = getCurrentAlterMarkerState(selectName);//获取保存在本地的markerState
+        //获取可替代样点的名称，如样点554不可采，我们计算出554的一批可替代样点，并将这批可替代样点显示在地图上，这批可替代样点的名称就是554
+        String alterName = kmlPrefHelper.getAlterMarkerNameFromPref();
+        switch (dealFlag)
+        {
+            case HIDE_MARKERS://隐藏marker
+                // 隐藏可替代样点
+                if (alterMarkers != null && selectName.equals(alterName))
+                {
+                    for (int i = 0; i < alterMarkers.size(); i++) {
+                        Marker marker = alterMarkers.get(i);
+                        if (marker.isVisible())
+                        {
+                            marker.setVisible(false);
+
+                        }
+                    }
+                    currentAlterMarkerState = HIDE_MARKERS;
+                    saveCurrentAlterMarkerState(selectName, currentAlterMarkerState);
+                }
+
+                break;
+            case SHOW_MARKERS://显示
+                if (currentAlterMarkerState == HIDE_MARKERS)//如果当前marker的状态是被隐藏的状态，直接设置visible即可
+                {
+                    //如果用户将kml设为隐藏状态，然后退出程序，再打开程序，点击显示，此时的kmlMarkers可能为空，这是一个问题
+                    if (alterMarkers != null && selectName.equals(alterName))
+                    {
+                        for (int i = 0; i < alterMarkers.size(); i++) {
+                            Marker marker = alterMarkers.get(i);
+                            marker.setVisible(true);
+                        }
+                    }
+
+                    currentAlterMarkerState = SHOW_MARKERS;
+                    saveCurrentAlterMarkerState(selectName, currentAlterMarkerState);
+                }
+                break;
+            case DELETE_MARKERS:
+                if (selectName.equals(alterName))
+                {
+
+                    deleteAlterMarkersAndPref(selectName);
+                    currentAlterMarkerState = MARKER_NO_EDIT;
+                    saveCurrentAlterMarkerState(selectName, currentAlterMarkerState);
+                }
+                break;
+            case SAVE_MARKERS:
+                currentAlterMarkerState = SAVE_MARKERS;
+                saveCurrentAlterMarkerState(selectName, currentAlterMarkerState);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * @param deleteKml
+     * 删除此kml保存在本地的pref数据，删除此kml的marker
+     */
+    private void deleteMarkersAndPref(String deleteKml)
+    {
+        kmlPrefHelper.updateAddedKmlNames(deleteKml);//删除此kml在AddedKmlNames中的记录
+        kmlPrefHelper.clearAddedKmlFromShared(deleteKml);//删除此kml保存在本地的数据
+        kmlPrefHelper.deleteCertainKmlShared(deleteKml);//删除保存在本地的shared文件
+        if (kmlMarkers != null)
+        {
+
+            for (int i = 0; i < kmlMarkers.size(); i++) {
+                Marker marker = kmlMarkers.get(i);
+                Text markerText = kmlMarkersText.get(i);
+                Bundle bundle = marker.getExtraInfo();
+                String markerParentKml = bundle.getString("markerParentKml");
+                if (markerParentKml.equals(deleteKml))
+                {
+                    marker.remove();
+                    markerText.remove();
+                }
+            }
+        }
+        // 删除之后将FavoriteActivity中showHideDeleteKml方法中的showHideDelete_pref的flag改为MARKER_NO_EDIT状态，
+        //因为若不这样做，如，在收藏页面删除了4thalter.kmz之后，将其保存为：4thalter.kmz---DELETE_MARKER,在MainActivity中，onResume方法会经常
+        //执行的，当你再添加4thalter.kmz到地图上之后，在执行onResume方法时程序读取到他的状态是DELETE_MARKER，就会立即执行deleteMarkersAndPref
+        //方法，将此kmz删除
+        SharedPreferences.Editor editor = getSharedPreferences("showHideDelete_pref", MODE_PRIVATE).edit();
+        editor.putString("selectKmlName", deleteKml);
+        editor.putInt(deleteKml, MARKER_NO_EDIT);
+        editor.commit();
+
+    }
+    /**
+     * @param deleteKml
+     * 删除alter marker其显示在地图上的marker
+     */
+    private void deleteAlterMarkersAndPref(String deleteKml)
+    {
+        kmlPrefHelper.clearAlterCoorsFromPref();//清空此kml保存在本地的数据
+        //kmlPrefHelper.deleteCertainKmlShared("AlterSamplesList");//删除保存在本地的shared文件
+        //kmlPrefHelper.removeMarkerNameFromPref();
+        if (alterMarkers != null)
+        {
+            for (int i = 0; i < alterMarkers.size(); i++) {
+                Marker marker = alterMarkers.get(i);
+                marker.remove();
+            }
+            alterMarkers.clear();
+        }
+        //删除此marker的可替代样点之后，将其置为MARKER_NO_EDIT状态
+        SharedPreferences.Editor editor = getSharedPreferences("showHideDeleteAlter_pref", MODE_PRIVATE).edit();
+        editor.putString("selectName", deleteKml);
+        editor.putInt(deleteKml, MARKER_NO_EDIT);
+        editor.commit();
+
+    }
+
+    /**
+     * @param markerState
+     * 将marker的当前状态保存到本地，显示，隐藏，删除
+     */
+    private void saveCurrentMarkerState(String kmlName, int markerState)
+    {
+        SharedPreferences.Editor editor = getSharedPreferences("saveMarkerState_pref", MODE_PRIVATE).edit();
+        editor.putInt(kmlName, markerState);
+
+        editor.commit();
+    }
+    private int getCurrentMarkerState(String kmlName)
+    {
+        int markerState = 0;
+        SharedPreferences preferences = getSharedPreferences("saveMarkerState_pref", MODE_PRIVATE);
+        markerState = preferences.getInt(kmlName, 0);
+        return markerState;
+    }
+    /**
+     * @param markerState
+     * 将altermarker的当前状态保存到本地，显示，隐藏，删除
+     */
+    private void saveCurrentAlterMarkerState(String markerName, int markerState)
+    {
+        SharedPreferences.Editor editor = getSharedPreferences("saveAlterMarkerState_pref", MODE_PRIVATE).edit();
+        editor.putInt(markerName, markerState);
+
+        editor.commit();
+    }
+    private int getCurrentAlterMarkerState(String markerName)
+    {
+        int markerState = 0;
+        SharedPreferences preferences = getSharedPreferences("saveAlterMarkerState_pref", MODE_PRIVATE);
+        markerState = preferences.getInt(markerName, 0);
+        return markerState;
+    }
 //    @Override
 //    public void onBackPressed() {
 //        if (doubleBackToExitOnce)

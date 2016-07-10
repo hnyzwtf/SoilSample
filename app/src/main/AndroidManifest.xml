@@ -72,6 +72,7 @@
         <activity android:name=".ui.sampleinfo.AlterParamsFCMActivity"/>
         <activity android:name=".ui.main.BNDemoGuideActivity"/>
         <activity android:name=".ui.favorite.FavoriteActivity"/>
+        <activity android:name=".ui.myinfo.OfflineMapActivity"/>
         <!-- 土壤剖面拍照分层 -->
         <activity android:name="com.soil.profile.ui.SoilProfileActivity"/>
         <activity android:name="com.soil.profile.ui.ActivityAttributeHome"/>

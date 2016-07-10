@@ -21,6 +21,7 @@ import com.soil.soilsample.base.BaseActivity;
 public class MyInfoActivity extends BaseActivity implements View.OnClickListener {
     private Toolbar toolbar;
     private LinearLayout altersampleModel;
+    private LinearLayout offlineMapLayout;
     private LinearLayout setLayout;
     private LinearLayout exitFinish;
 
@@ -38,12 +39,14 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_white_24dp);
         altersampleModel = (LinearLayout) findViewById(R.id.rl_altersample_model);
+        offlineMapLayout = (LinearLayout) findViewById(R.id.rl_offline_map);
         setLayout = (LinearLayout) findViewById(R.id.rl_set);
         exitFinish = (LinearLayout) findViewById(R.id.rl_exit);
     }
     private void initEvents()
     {
         altersampleModel.setOnClickListener(this);
+        offlineMapLayout.setOnClickListener(this);
         setLayout.setOnClickListener(this);
         exitFinish.setOnClickListener(this);
     }
@@ -105,6 +108,9 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         {
             case R.id.rl_altersample_model:
                 showSampleModelDialog();
+                break;
+            case R.id.rl_offline_map:
+                startActivity(new Intent(MyInfoActivity.this, OfflineMapActivity.class));
                 break;
             case R.id.rl_set:
                 startActivity(new Intent(MyInfoActivity.this, SettingActivity.class));

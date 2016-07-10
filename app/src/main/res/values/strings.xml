@@ -16,11 +16,12 @@
     <!-- 土壤剖面页面-->
     <string name="take_photo">记录土壤剖面</string>
     <string name="local_profile">查看本地土壤剖面</string>
-    <!-- 设置页面 -->
+    <!-- 我的页面 -->
     <string name="set">设置</string>
     <string name="exit">退出</string>
     <string name="help">帮助</string>
     <string name="about_me">关于我们</string>
+    <string name="offline_map_download">离线地图下载</string>
     <string name="altersample_model">替代样点计算方法选择</string><!-- 地理环境相似度，FCM模糊隶属度-->
 
     <!-- FCM -->

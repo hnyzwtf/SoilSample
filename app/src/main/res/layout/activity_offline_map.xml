@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_citylist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:textSize="@dimen/text_size_18"
+            android:text="城市列表" />
+
+        <Button
+            android:id="@+id/btn_download_manage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:textSize="@dimen/text_size_18"
+            android:text="下载管理" />
+    </LinearLayout>
+    <!-- 下载管理 -->
+    <LinearLayout
+        android:id="@+id/llayout_download_manage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#CCCCCC"
+            android:paddingLeft="15dp"
+            android:text="正在下载"
+            android:textColor="#FFFFFF" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <!--正在下载 -->
+                <com.soil.soilsample.ui.myinfo.HotCityListView
+                    android:id="@+id/lv_downloading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.soil.soilsample.ui.myinfo.HotCityListView>
+                <!--下载完成 -->
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#CCCCCC"
+                    android:paddingLeft="15dp"
+                    android:text="下载完成"
+                    android:textColor="#FFFFFF" />
+                <com.soil.soilsample.ui.myinfo.HotCityListView
+                    android:id="@+id/lv_downloaded"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </com.soil.soilsample.ui.myinfo.HotCityListView>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+    <!-- 城市列表 -->
+    <LinearLayout
+        android:id="@+id/llayout_city_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone" >
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#CCCCCC"
+            android:paddingLeft="15dp"
+            android:text="全国"
+            android:textColor="#FFFFFF" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.soil.soilsample.ui.myinfo.HotCityListView
+                    android:id="@+id/lv_hotcity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.soil.soilsample.ui.myinfo.HotCityListView>
+                <com.soil.soilsample.ui.myinfo.AllCityExpandListView
+                    android:id="@+id/expand_lv_allcities"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.soil.soilsample.ui.myinfo.AllCityExpandListView>
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+
+</LinearLayout>

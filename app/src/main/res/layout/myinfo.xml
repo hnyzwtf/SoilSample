@@ -34,6 +34,18 @@
                 style="@style/option_item_text"
                 android:text="@string/altersample_model" />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/rl_offline_map"
+            style="@style/option_item_rl"
+            android:layout_marginTop="@dimen/space_20">
+            <ImageView
+                style="@style/option_item_img"
+                android:contentDescription="@null"
+                android:background="@drawable/icon_offline_map_download"/>
+            <TextView
+                style="@style/option_item_text"
+                android:text="@string/offline_map_download" />
+        </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"

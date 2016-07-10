@@ -1012,6 +1012,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         super.onPause();
         mMapView.onPause();
     }
+
     /**
      * @param sourceLatlng
      * @param changedBitmap

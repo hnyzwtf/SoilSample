@@ -14,7 +14,7 @@ import com.baidu.mapapi.map.offline.MKOLUpdateElement;
 import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.soil.soilsample.R;
 import com.soil.soilsample.support.util.SizeFormatChange;
-import com.soil.soilsample.ui.main.MainActivity;
+import com.soil.soilsample.ui.myinfo.BaseMapDemo;
 
 import java.util.ArrayList;
 
@@ -94,7 +94,7 @@ public class DownloadedAdapter extends BaseAdapter {
                 Intent intent = new Intent();
                 intent.putExtra("x", element.geoPt.longitude);
                 intent.putExtra("y", element.geoPt.latitude);
-                intent.setClass(mContext, MainActivity.class);
+                intent.setClass(mContext, BaseMapDemo.class);
                 mContext.startActivity(intent);
             }
         });

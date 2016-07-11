@@ -180,6 +180,7 @@
                     android:layout_height="wrap_content"
                     android:text="详情"
                     android:drawableRight="@drawable/icon_detail"
+                    android:drawablePadding="@dimen/space_4"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp" />
                 <TextView
@@ -189,6 +190,7 @@
                     android:layout_marginTop="25dp"
                     android:text="导航"
                     android:drawableRight="@drawable/icon_navi"
+                    android:drawablePadding="@dimen/space_4"
                     android:textColor="@color/colorPrimary"
                     android:textSize="18sp" />
             </LinearLayout>

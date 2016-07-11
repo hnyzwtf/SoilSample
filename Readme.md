@@ -9,3 +9,7 @@
 * 添加自定义图层；（下一个版本添加）
 * 相似度计算出的可替代样点结果和FCM计算出的可替代样点结果，都保存在一个sharedpreference文件中，即AlterSamplesList；
 * 在ReadKml.java中，解析成功时，给每个坐标点设置（setIconId）marker为default_marker；
+###version 2.2.2 2016.07.11
+* 修复样点详情页面不能正确导出kml文件的问题；
+* 修复计算可替代样点时，之前已经显示的可替代样点marker不会自动清除的问题；
+* 可替代样点的可达性数值保留6位小数显示；

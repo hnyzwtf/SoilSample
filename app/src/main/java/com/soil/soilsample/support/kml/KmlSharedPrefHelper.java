@@ -22,8 +22,8 @@ import java.util.Set;
 public class KmlSharedPrefHelper {
 
     private Set<String> kmlNamesSets = new HashSet<String>();
-    private static KmlSharedPrefHelper kmlSharedPrefHelper;
     private Context mContext;
+    private static KmlSharedPrefHelper kmlSharedPrefHelper;
     private KmlSharedPrefHelper(Context context)
     {
         this.mContext = context;

@@ -22,7 +22,6 @@ import com.soil.soilsample.support.kml.WriteKml;
 import com.soil.soilsample.support.util.ToastUtil;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -259,8 +258,8 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
             Type type = new TypeToken<List<CoordinateAlterSample>>(){}.getType();
             //先从本地取出可替代样点
             List<CoordinateAlterSample> alterSamples = null;
-            alterSamples = new ArrayList<CoordinateAlterSample>();
             alterSamples = gson.fromJson(json, type);
+
             //调用WriteKml中的方法，写出Kml
             WriteKml writeKml = new WriteKml();
             try {

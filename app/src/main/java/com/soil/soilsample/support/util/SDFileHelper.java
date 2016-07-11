@@ -13,13 +13,28 @@ import java.io.IOException;
  * Created by GIS on 2016/6/22 0022.
  */
 public class SDFileHelper {
+
     private Context mContext;
     private String mSDCardPath = null;
     public static final String APP_FOLDER_NAME = "SoilSample";
-    public SDFileHelper(Context context)
+    private static SDFileHelper sdFileHelper;
+    private SDFileHelper(Context context)
     {
-        super();
         this.mContext = context;
+    }
+    public static SDFileHelper getInstance(Context context)
+    {
+        if (sdFileHelper == null)
+        {
+            synchronized (SDFileHelper.class)
+            {
+                if (sdFileHelper == null)
+                {
+                    sdFileHelper = new SDFileHelper(context);
+                }
+            }
+        }
+        return sdFileHelper;
     }
     public void saveFileToSD(String fileName, String content) throws Exception
     {
@@ -84,12 +99,12 @@ public class SDFileHelper {
         }
         return null;
     }
-    public void createDirOnSDcard()
+    public void createKmlDirOnSDcard()
     {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
         {
             try {
-                String dirPath = Environment.getExternalStorageDirectory().getCanonicalPath() + "/SoilSample";
+                String dirPath = Environment.getExternalStorageDirectory().getCanonicalPath() + "/SoilSample" + "/kml";
                 File file = new File(dirPath);
                 if (!file.exists())
                 {

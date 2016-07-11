@@ -209,6 +209,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         if (alterSamplesList != null)
         {
+            // 在添加新的marker之前，把以前的marker都删除掉
+            if (alterMarkers != null)
+            {
+                for (int i = 0; i < alterMarkers.size(); i++) {
+                    alterMarkers.get(i).remove();
+                }
+                alterMarkers.removeAll(alterMarkers);
+            }
             addAlterMarkers(alterSamplesList);
 
         }
@@ -218,6 +226,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         if (alterFCMSamplesList != null)
         {
+            // 在添加新的marker之前，把以前的marker都删除掉
+            if (alterMarkers != null)
+            {
+                for (int i = 0; i < alterMarkers.size(); i++) {
+                    alterMarkers.get(i).remove();
+                }
+                alterMarkers.removeAll(alterMarkers);
+            }
             addAlterMarkers(alterFCMSamplesList);
 
         }
@@ -708,7 +724,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         LinearLayout markerCostLayout = (LinearLayout) markOverviewLayout.findViewById(R.id.rl_mark_cost);
         double latitude = 0.0;
         double longitude = 0.0;
-        String costVaule;
+        double costVaule = 0.0;
         if (kmlMarkers.contains(marker))
         {
             markerFlag = 0;
@@ -727,10 +743,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             CoordinateAlterSample markerCoor = bundle.getParcelable("alterMarker_bundle");
             latitude = markerCoor.getY();//可替代样点坐标，是从服务器返回的，因此getX是经度，getY是纬度
             longitude = markerCoor.getX();
-            costVaule = markerCoor.getCostValue();
+            costVaule = Double.parseDouble(markerCoor.getCostValue());
             markerName.setText(markerCoor.getName());
             markerLatlng.setText(String.valueOf(df.format(latitude)) + "   " + String.valueOf(df.format(longitude)));
-            markerCost.setText(costVaule);
+            markerCost.setText(String.valueOf(df.format(costVaule)));
             markerCostLayout.setVisibility(View.VISIBLE);
             markOverviewLayout.setVisibility(View.VISIBLE);
             setBottomLayoutClickFalse();
@@ -1053,7 +1069,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
     public boolean createSoilSampleDir()
     {
-        SDFileHelper sdFileHelper = new SDFileHelper(MainActivity.this);
+        SDFileHelper sdFileHelper = SDFileHelper.getInstance(MainActivity.this);
         sdFileHelper.createDirOnSD();
         return true;
     }

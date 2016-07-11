@@ -111,7 +111,7 @@ public class WriteKml {
         String docKmlPath = BaseApplication.getContext().getFilesDir().getAbsolutePath() + "//doc.kml";
 
         zipWriteKml(docKmlPath, kmlName);
-        ToastUtil.show(BaseApplication.getContext(), "导出kml成功，保存在sdcard0/SoilSample/kml目录下");
+        ToastUtil.showLongTime(BaseApplication.getContext(), "导出kml成功，保存在sdcard0/SoilSample目录下");
 
     }
     /*
@@ -121,9 +121,10 @@ public class WriteKml {
     {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
         {
+            //createKmlDirOnSDcard();
             // 最终生成的kml文件
             FileOutputStream fileOutput = new FileOutputStream(Environment.getExternalStorageDirectory().getCanonicalPath()
-                    + "/" + "SoilSample" + "/" + "kml" + "/" + kmlName + ".kmz");
+                    + "/" + "SoilSample" + "/" + kmlName + ".kmz");
             OutputStream os = new BufferedOutputStream( fileOutput);
             ZipOutputStream zos = new ZipOutputStream(os);
             byte[] buf = new byte[8192];
@@ -229,5 +230,6 @@ public class WriteKml {
         String cDataContent = buffer.toString();
         return cDataContent;
     }
+
 
 }

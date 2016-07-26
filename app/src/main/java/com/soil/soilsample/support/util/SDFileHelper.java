@@ -18,6 +18,8 @@ public class SDFileHelper {
     private String mSDCardPath = null;
     public static final String APP_FOLDER_NAME = "SoilSample";
     private static SDFileHelper sdFileHelper;
+    private static final String TAG = "SDFileHelper";
+
     private SDFileHelper(Context context)
     {
         this.mContext = context;
@@ -72,20 +74,31 @@ public class SDFileHelper {
         return sb.toString();
     }
     /*
-   * 在SD卡中创建SoilSample目录
+   * 在SD卡中创建SoilSample目录,和/SoilSample/upload目录
    * */
     public boolean createDirOnSD()
     {
-        mSDCardPath = getSdcardDir();
+        mSDCardPath = getSdcardDir();// mSDCardPath is: /storage/emulated/0
         if (mSDCardPath == null) {
             return false;
         }
         File f = new File(mSDCardPath, APP_FOLDER_NAME);
+        File uploadFile = new File(mSDCardPath + "/SoilSample" + "/upload");
         if (!f.exists()) {
             try {
                 f.mkdir();
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
+            }
+        }
+
+        if (!uploadFile.exists()) {
+            try {
+                uploadFile.mkdir();
+            } catch (Exception e) {
+                e.printStackTrace();
+
                 return false;
             }
         }
@@ -99,12 +112,12 @@ public class SDFileHelper {
         }
         return null;
     }
-    public void createKmlDirOnSDcard()
+    public void createUploadDirOnSDcard()
     {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
         {
             try {
-                String dirPath = Environment.getExternalStorageDirectory().getCanonicalPath() + "/SoilSample" + "/kml";
+                String dirPath = Environment.getExternalStorageDirectory().getCanonicalPath() + "/SoilSample" + "/upload";
                 File file = new File(dirPath);
                 if (!file.exists())
                 {

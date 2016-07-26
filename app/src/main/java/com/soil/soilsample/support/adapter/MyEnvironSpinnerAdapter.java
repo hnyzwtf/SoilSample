@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import com.soil.soilsample.R;
 
-
+/**
+ * 环境因子选择列表spinner适配器
+ */
 public class MyEnvironSpinnerAdapter extends BaseAdapter {
 	private Context mContext;
 	private String spinnerValues[];
@@ -21,19 +23,16 @@ public class MyEnvironSpinnerAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
 		return spinnerValues.length;
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
 		return spinnerValues[position];
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

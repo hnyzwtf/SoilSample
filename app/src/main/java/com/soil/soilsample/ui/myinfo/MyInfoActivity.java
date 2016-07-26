@@ -95,6 +95,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
                 finish();
                 break;
             case R.id.action_help:
+                startActivity(new Intent(MyInfoActivity.this, AppHelpActivity.class));
                 break;
             default:
                 break;

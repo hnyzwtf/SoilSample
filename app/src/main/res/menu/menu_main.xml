@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_add"
-        android:orderInCategory="90"
-        android:icon="@drawable/add"
-        android:title="添加"
-        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_dir_up"
@@ -21,13 +15,20 @@
         android:title="@string/menu_dir_select"
         android:visible="false"/>
     <item
-        android:id="@+id/action_about_app"
-        android:orderInCategory="100"
-        android:title="关于APP"
-        app:showAsAction="never" />
+        android:id="@+id/action_add_sample"
+        android:icon="@drawable/menu_add_sample_icon"
+        android:title="@string/menu_add_sample"
+        app:showAsAction="never"/>
     <item
-        android:id="@+id/action_about_me"
-        android:orderInCategory="100"
-        android:title="关于我"
-        app:showAsAction="never" />
+        android:id="@+id/action_upload"
+        android:icon="@drawable/menu_upload_icon"
+        android:title="@string/menu_upload"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_about_app"
+        android:icon="@drawable/menu_about_icon"
+        android:title="关于"
+        app:showAsAction="never"
+        android:visible="false"/>
+
 </menu>

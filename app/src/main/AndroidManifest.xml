@@ -74,6 +74,8 @@
         <activity android:name=".ui.favorite.FavoriteActivity"/>
         <activity android:name=".ui.myinfo.OfflineMapActivity"/>
         <activity android:name=".ui.myinfo.BaseMapDemo"/>
+        <activity android:name=".ui.myinfo.AppHelpActivity"/>
+        <activity android:name=".ui.main.UploadActivity"/>
         <!-- 土壤剖面拍照分层 -->
         <activity android:name="com.soil.profile.ui.SoilProfileActivity"/>
         <activity android:name="com.soil.profile.ui.ActivityAttributeHome"/>

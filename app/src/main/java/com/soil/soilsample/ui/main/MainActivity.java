@@ -70,6 +70,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -147,7 +148,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         activityList.add(this);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
-
+        //setOverflowButtonAlways();
         initView();
         initEvents();
         changeDefaultBaiduMapView();
@@ -168,6 +169,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         //Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.toolbar_add_icon));
         mMapView = (MapView) findViewById(R.id.baidu_mapview);
         selectMapType = (ImageView) findViewById(R.id.map_type);
         myLocation = (ImageView) findViewById(R.id.my_location);
@@ -418,23 +420,49 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         return true;
     }
 
+    /**
+     * @param view
+     * @param menu
+     * @return
+     * 反射用法，使得overflow的下拉菜单带图标显示
+     */
+    @Override
+    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+        if (menu != null) {
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+                try {
+                    Method m = menu.getClass().getDeclaredMethod(
+                            "setOptionalIconsVisible", Boolean.TYPE);
+                    m.setAccessible(true);
+                    m.invoke(menu, true);
+                } catch (Exception e) {
+                    Log.e(getClass().getSimpleName(), "onMenuOpened...unable to set icons for overflow menu", e);
+                }
+            }
+        }
+        return super.onPrepareOptionsPanel(view, menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id)
         {
-            case R.id.action_add:
+            case R.id.action_add_sample:
                 openFileBrowser();
-                return true;
+            break;
+            case R.id.action_upload:
+                startActivity(new Intent(MainActivity.this, UploadActivity.class));
+                break;
         }
         //return super.onOptionsItemSelected(item);
-        return false;
+        return true;
     }
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
-            if ((item.getItemId() == R.id.action_add)) {
+            if ((item.getItemId() == R.id.action_add_sample)) {
                 item.setVisible(true);
             } else if ((item.getItemId() == R.id.menu_dir_up)
                     || (item.getItemId() == R.id.menu_dir_select)) {

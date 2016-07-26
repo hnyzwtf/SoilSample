@@ -41,8 +41,8 @@ import java.util.List;
  */
 public class EnvironVariableActivity extends BaseActivity implements OnClickListener{
 	private Toolbar toolbar;
-
-	private TextView environPathText;//一个隐藏控件，用来保存环境因子变量的路径
+	//一个隐藏控件，用来保存服务器返回的环境因子变量路径，用于AlternativeParamsActivity中的getEnvironParamsFromShared方法
+	private TextView environPathText;
 	private EmptyLayout mEmptyLayout;
 	private ListView environListView;
 	private List<String> environmentList = new ArrayList<String>();//listview上显示的数据源

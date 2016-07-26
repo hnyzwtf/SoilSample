@@ -81,4 +81,6 @@
     <string name="filebrowser_text">Current folder: \n/THis/is/a/long/path/to/test/if/this/will/span/multiple/lines</string>
     <string name="menu_dir_up">Up to parent directory</string>
     <string name="menu_dir_select">Select current directory</string>
+    <string name="menu_add_sample">添加样点数据</string>
+    <string name="menu_upload">上传环境因子</string>
 </resources>

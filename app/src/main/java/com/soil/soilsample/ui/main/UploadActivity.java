@@ -33,6 +33,7 @@ import okhttp3.Request;
 
 /**
  * 上传页面，更多请见https://github.com/hongyangAndroid/okhttp-utils
+ * 屏蔽了上传网址---20160728
  */
 public class UploadActivity extends BaseActivity {
     private Toolbar toolbar;
@@ -43,7 +44,8 @@ public class UploadActivity extends BaseActivity {
     private List<String> uploadFileList = new ArrayList<String>();//数据源即文件名list，他保存了SoilSample/upload文件夹下所有的tif文件名
     private UploadListViewAdapter uploadAdapter;
     // upload
-    private String mUploadUrl = "http://222.192.7.122:8181/FileUpload/smartupload.jsp";
+    //private String mUploadUrl = "http://222.192.7.122:8181/FileUpload/smartupload.jsp";
+    private String mUploadUrl = "http://10.192.7.122:8181/FileUpload/smartupload.jsp";
     private ProgressBar mProgressbar;
 
     private String uploadFilePath = BaseApplication.getAppUploadPath();

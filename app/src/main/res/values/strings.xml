@@ -9,7 +9,6 @@
 
     <string name="hint_required">必填</string>
     <!-- 功能页面 -->
-    <string name="function">功能</string>
     <string name="environ_variable">环境因子选择</string>
     <string name="similarity_model">相似度模型选择</string>
     <string name="add_sample">添加样点数据</string>
@@ -17,10 +16,9 @@
     <string name="take_photo">记录土壤剖面</string>
     <string name="local_profile">查看本地土壤剖面</string>
     <!-- 我的页面 -->
-    <string name="set">设置</string>
     <string name="exit">退出</string>
     <string name="help">帮助</string>
-    <string name="about_me">关于我们</string>
+    <string name="about_me">关于</string>
     <string name="offline_map_download">离线地图下载</string>
     <string name="altersample_model">替代样点计算方法选择</string><!-- 地理环境相似度，FCM模糊隶属度-->
 
@@ -35,10 +33,9 @@
     <!-- sample info -->
     <string name="sample_name">名称</string>
     <string name="sample_comment">html备注</string>
-    <string name="sample_picture">图片</string>
-    <string name="calc_alterSample">计算可替代样点</string>
-    <string name="export_altersamples">导出可替代样点为KML</string>
-    <string name="more">更多</string>
+    <string name="sample_picture">图标</string>
+    <string name="calc_alterSample">替代样点</string>
+    <string name="export_kml">导出可替代样点KML</string>
     <string name="sample_lat">纬度</string>
     <string name="sample_lng">经度</string>
 
@@ -72,10 +69,9 @@
     <string name="tip_network_error">没有可用的网络</string>
 
     <!-- 首页面 -->
-    <string name="tab_soil">土壤</string>
+    <string name="soil_profile">土壤剖面</string>
     <string name="tab_favorite">收藏</string>
-    <string name="tab_function">功能</string>
-    <string name="tab_more">我</string>
+    <string name="more">更多</string>
     <string name="sample_cost">可达性</string>
     <string name="sample_latlng">坐标</string>
     <string name="filebrowser_text">Current folder: \n/THis/is/a/long/path/to/test/if/this/will/span/multiple/lines</string>
@@ -83,4 +79,6 @@
     <string name="menu_dir_select">Select current directory</string>
     <string name="menu_add_sample">添加样点数据</string>
     <string name="menu_upload">上传环境因子</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

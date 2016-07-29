@@ -30,7 +30,7 @@ import java.util.List;
 public class SampleInfoActivity extends BaseActivity implements View.OnClickListener {
     private Toolbar toolbar;
     private LinearLayout exportAlterSamples;
-    private LinearLayout calcAlterSample;
+
     private LinearLayout sampleHtmlCommentBtn;
     private ImageButton samplePicBtn;
 
@@ -48,7 +48,6 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     private int imageSelected = 0;//选中的marker图片，从SamplePicSelectActivity传入
     private int markerIconId = 0;//从intentFromMainActivity传入的marker的图标
 
-    public static int altersampleModel = 0;
     private static final String TAG = "SampleInfoActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +58,6 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         initEvents();
         initEditText();
         initSamplePicBtnImage();
-        altersampleModel = getSetInfoFromShared();//从shared中读取配置信息，在本类中是读取用户选择了什么采样方法
     }
 
     private void initView() {
@@ -69,7 +67,6 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_white_24dp);
         getSupportActionBar().setTitle("样点详情");
         exportAlterSamples = (LinearLayout) findViewById(R.id.rl_export_altersamples);
-        calcAlterSample = (LinearLayout) findViewById(R.id.rl_calc_alterSample);
         samplePicBtn = (ImageButton) findViewById(R.id.imgBtn_sample_pic);
         sampleHtmlCommentBtn = (LinearLayout) findViewById(R.id.rl_sample_htmlComment);
         sampleNameText = (EditText) findViewById(R.id.edit_sample_name);
@@ -100,7 +97,6 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
     {
         sampleHtmlCommentBtn.setOnClickListener(this);
         samplePicBtn.setOnClickListener(this);
-        calcAlterSample.setOnClickListener(this);
         exportAlterSamples.setOnClickListener(this);
     }
     private void initEditText()
@@ -138,25 +134,6 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
                 Intent intentToSamplePicSelect = new Intent(SampleInfoActivity.this, SamplePicSelectActivity.class);
                 startActivityForResult(intentToSamplePicSelect, 1);//使用这个方法可以接收SamplePicSelectActivity返回的数据
                 break;
-            case R.id.rl_calc_alterSample://计算可替代样点
-                if (altersampleModel == 0)
-                {
-                    String markerLongLat = markerLng + "," + markerLat;
-                    Intent intentToAlterOptions = new Intent(SampleInfoActivity.this, AlternativeParamsActivity.class);
-                    intentToAlterOptions.putExtra("markerLongLat", markerLongLat);
-                    intentToAlterOptions.putExtra("markerName", markerName);
-                    startActivity(intentToAlterOptions);
-
-                }
-                if (altersampleModel == 1)
-                {
-                    String markerLongLat = markerLng + "," + markerLat;
-                    Intent intentToAlterFCMOptions = new Intent(SampleInfoActivity.this, AlterParamsFCMActivity.class);
-                    intentToAlterFCMOptions.putExtra("markerLongLat", markerLongLat);
-                    intentToAlterFCMOptions.putExtra("markerName", markerName);
-                    startActivity(intentToAlterFCMOptions);
-                }
-                break;
             case R.id.rl_export_altersamples:
                 exportAlterSamples();
                 break;
@@ -185,12 +162,7 @@ public class SampleInfoActivity extends BaseActivity implements View.OnClickList
         }
 
     }
-    private int getSetInfoFromShared()
-    {
-        SharedPreferences preferences = getSharedPreferences("SettingInfo", MODE_PRIVATE);
-        int sampleModel = preferences.getInt("altersampleModel", 0);
-        return sampleModel;
-    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_sample_info, menu);

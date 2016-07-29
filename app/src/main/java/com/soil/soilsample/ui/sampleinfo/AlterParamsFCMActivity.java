@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
@@ -21,6 +23,9 @@ import com.soil.soilsample.model.AsyncResponse;
 import com.soil.soilsample.model.CoordinateAlterSample;
 import com.soil.soilsample.support.util.ToastUtil;
 import com.soil.soilsample.ui.dialog.CustomWaitDialog;
+import com.soil.soilsample.ui.function.EnvironVariableActivity;
+import com.soil.soilsample.ui.function.FCMActivity;
+import com.soil.soilsample.ui.function.FuzzyMembershipActivity;
 import com.soil.soilsample.ui.main.MainActivity;
 
 import org.json.JSONArray;
@@ -39,9 +44,13 @@ import java.util.List;
 /**
  * Created by GIS on 2016/6/21 0021.
  */
-public class AlterParamsFCMActivity extends BaseActivity {
+public class AlterParamsFCMActivity extends BaseActivity implements View.OnClickListener{
     private Toolbar toolbar;
-    private String markerLongLat;//默认显示在coorUnaccessFCMEdit中的坐标，注意，发送给服务器的坐标，经度在前，纬度在后
+    private Button selectEnvironBtn;
+    private Button fcmBtn;
+    private Button selectMembershipBtn;
+    private String markerLongLat;//注意，发送给服务器的坐标，经度在前，纬度在后
+    private String markerLongLatShow;//默认显示在coorUnaccessEdit中的坐标，保留了小数位
 
     private EditText coorUnaccessFCMEdit;
     private EditText membershipThresholdEdit;
@@ -59,6 +68,8 @@ public class AlterParamsFCMActivity extends BaseActivity {
     private String jsonRequestForAlterFCMSample = null;//发送给服务器的json字符串请求
     Dialog waitDialog = null;
     private String markerName;
+    private Boolean hasSelectEnviron = true;//用户是否已经选择了环境因子，默认选中
+
     public String TAG = "AlterParamsFCM";
 
     @Override
@@ -69,7 +80,8 @@ public class AlterParamsFCMActivity extends BaseActivity {
         setContentView(R.layout.alternative_params_fcm);
         getIntentParams();
         initView();
-        getMembershipParamsFromShared();
+        initEvents();
+        //getMembershipParamsFromShared();
         initCoorEditText();
 
     }
@@ -80,17 +92,27 @@ public class AlterParamsFCMActivity extends BaseActivity {
     {
         Intent intent = getIntent();
         markerLongLat = intent.getStringExtra("markerLongLat");
+        markerLongLatShow = intent.getStringExtra("markerLongLatShow");
         markerName = intent.getStringExtra("markerName");
     }
     private void initView() {
         coorUnaccessFCMEdit = (EditText) findViewById(R.id.edit_unaccess_coor_fcm);
         membershipThresholdEdit = (EditText) findViewById(R.id.edit_membership_threshold);
         candidateFCMRadiusEdit = (EditText) findViewById(R.id.edit_candidate_radius_fcm);
+        selectEnvironBtn = (Button) findViewById(R.id.btn_select_environ_fcm);
+        fcmBtn = (Button) findViewById(R.id.btn_fcm);
+        selectMembershipBtn = (Button) findViewById(R.id.btn_fuzzy_membership_map);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_white_24dp);
         getSupportActionBar().setTitle("参数设置");
+    }
+    private void initEvents()
+    {
+        selectEnvironBtn.setOnClickListener(this);
+        fcmBtn.setOnClickListener(this);
+        selectMembershipBtn.setOnClickListener(this);
     }
 
     /**
@@ -123,13 +145,13 @@ public class AlterParamsFCMActivity extends BaseActivity {
     }// end of getEnvironParamsFromShared
     private void initCoorEditText()
     {
-        coorUnaccessFCMEdit.setText(markerLongLat);//默认显示当前操作样点的坐标
+        coorUnaccessFCMEdit.setText(markerLongLatShow);//默认显示当前操作样点的坐标
         membershipThresholdEdit.setText("0.02");
         candidateFCMRadiusEdit.setText("1000");
     }
     public void getEditText()
     {
-        coorUnaccessFCM = coorUnaccessFCMEdit.getText().toString();
+        coorUnaccessFCM = markerLongLatShow;
         membershipThreshold = membershipThresholdEdit.getText().toString();
         candidateFCMRadius = candidateFCMRadiusEdit.getText().toString();
     }
@@ -203,6 +225,28 @@ public class AlterParamsFCMActivity extends BaseActivity {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.btn_select_environ:
+                Intent intentToEnvironVariableActivity = new Intent(AlterParamsFCMActivity.this, EnvironVariableActivity.class);
+                startActivity(intentToEnvironVariableActivity);
+                break;
+            case R.id.btn_fcm:
+                Intent intentToFCMActivity = new Intent(AlterParamsFCMActivity.this, FCMActivity.class);
+                startActivity(intentToFCMActivity);
+                break;
+            case R.id.btn_fuzzy_membership_map:
+                Intent intentToFuzzyMemberActivity = new Intent(AlterParamsFCMActivity.this, FuzzyMembershipActivity.class);
+                startActivity(intentToFuzzyMemberActivity);
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
      * @author GIS
      * AsyncTask连接服务器
@@ -412,6 +456,7 @@ public class AlterParamsFCMActivity extends BaseActivity {
     }
     private void showDialog()
     {
+        hasSelectEnviron = false;//表示用户没有选择环境因子
         AlertDialog.Builder dialog = new AlertDialog.Builder(AlterParamsFCMActivity.this);
         dialog.setTitle("警告");
         dialog.setMessage("你还没有选择隶属度图层");
@@ -419,7 +464,9 @@ public class AlterParamsFCMActivity extends BaseActivity {
         dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                finish();
+
+                Intent intentToEnvironVariableActivity = new Intent(AlterParamsFCMActivity.this, EnvironVariableActivity.class);
+                startActivity(intentToEnvironVariableActivity);
             }
         });
         dialog.show();
@@ -439,14 +486,24 @@ public class AlterParamsFCMActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.action_ok:
-                waitDialog = CustomWaitDialog.show(AlterParamsFCMActivity.this, "计算中，请稍后...", true, null);
-                sendRequest();
+                getMembershipParamsFromShared();
+                if (hasSelectEnviron)
+                {
+
+                    waitDialog = CustomWaitDialog.show(AlterParamsFCMActivity.this, "计算中，请稍后...", true, null);
+                    sendRequest();
+                }
 
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hasSelectEnviron = true;
     }
     @Override
     protected void onDestroy() {

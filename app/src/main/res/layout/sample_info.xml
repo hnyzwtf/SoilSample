@@ -124,17 +124,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="@dimen/space_20"
             android:background="@color/list_divider_color"/>
-        <LinearLayout
-            android:id="@+id/rl_calc_alterSample"
-            style="@style/option_item_rl">
-            <ImageView
-                style="@style/option_item_img"
-                android:background="@drawable/icon_altersample"/>
-            <TextView
-                style="@style/option_item_text"
-                android:text="@string/calc_alterSample"/>
 
-        </LinearLayout>
         <LinearLayout
             android:id="@+id/rl_export_altersamples"
             style="@style/option_item_rl">
@@ -143,7 +133,7 @@
                 android:background="@drawable/icon_export"/>
             <TextView
                 style="@style/option_item_text"
-                android:text="@string/export_altersamples"/>
+                android:text="@string/export_kml"/>
 
         </LinearLayout>
         <LinearLayout

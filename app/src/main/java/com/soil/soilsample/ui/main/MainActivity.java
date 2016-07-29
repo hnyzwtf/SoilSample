@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -47,9 +51,9 @@ import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.baidu.navisdk.adapter.BNaviSettingManager;
 import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.google.gson.Gson;
-import com.soil.profile.ui.SoilProfileActivity;
 import com.soil.soilsample.BuildConfig;
 import com.soil.soilsample.R;
+import com.soil.soilsample.base.ActivityCollector;
 import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.model.Coordinate;
 import com.soil.soilsample.model.CoordinateAlterSample;
@@ -60,9 +64,11 @@ import com.soil.soilsample.support.util.CoorToBaidu;
 import com.soil.soilsample.support.util.SDFileHelper;
 import com.soil.soilsample.support.util.ToastUtil;
 import com.soil.soilsample.ui.favorite.FavoriteActivity;
-import com.soil.soilsample.ui.function.FunctionActivity;
 import com.soil.soilsample.ui.listener.MyOrientationListener;
+import com.soil.soilsample.ui.myinfo.AppHelpActivity;
 import com.soil.soilsample.ui.myinfo.MyInfoActivity;
+import com.soil.soilsample.ui.sampleinfo.AlterParamsActivity;
+import com.soil.soilsample.ui.sampleinfo.AlterParamsFCMActivity;
 import com.soil.soilsample.ui.sampleinfo.AlterSampleInfoActivity;
 import com.soil.soilsample.ui.sampleinfo.SampleInfoActivity;
 
@@ -80,7 +86,8 @@ import im.fir.sdk.FIR;
 import im.fir.sdk.VersionCheckCallback;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, FileBrowserFragment.OnFileAndFolderFinishListener,
-        BaiduMap.OnMarkerClickListener, BaiduMap.OnMapClickListener{
+        BaiduMap.OnMarkerClickListener, BaiduMap.OnMapClickListener, NavigationView.OnNavigationItemSelectedListener{
+    private Toolbar toolbar;
     private MapView mMapView = null;
     private BaiduMap myBaiduMap;
     private View defaultBaiduMapLogo = null;
@@ -103,6 +110,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private String mInitDir = Environment.getExternalStorageDirectory()
             .getPath();
     private static final String TAG = "MainActivity";
+
     // navi
     private String authinfo = null;
     public static List<Activity> activityList = new LinkedList<Activity>();
@@ -112,14 +120,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private ReadKml readKml = null;
     // 点击某个marker后，从底部弹出的布局
     private LinearLayout markOverviewLayout;
+    private TextView calcAlterSample;//计算可替代样点
     private TextView markDetailLayout;//marker详情
     private TextView markNaviLayout;//marker导航
-    // 底部导航栏布局
-    private LinearLayout bottomNaviLayout;
-    private LinearLayout tabSoil;
-    private LinearLayout tabFavorite;
-    private LinearLayout tabFunction;
-    private LinearLayout tabMe;
+    public static int altersampleModel = 0;//用户设置的可替代样点计算方法
+    // 侧边抽屉布局
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
     // 当前正在操作的marker
     private Marker currentMarker;
     // sampleinfoActivity
@@ -166,9 +173,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
     private void initView()
     {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.id_navi_view);
+
         //Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //toolbar.setNavigationIcon(R.drawable.icon_navigation);
         toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.toolbar_add_icon));
         mMapView = (MapView) findViewById(R.id.baidu_mapview);
         selectMapType = (ImageView) findViewById(R.id.map_type);
@@ -176,13 +187,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         selectLocationMode = (ImageView) findViewById(R.id.map_location);
 
         markOverviewLayout = (LinearLayout) findViewById(R.id.mark_overview_layout);
-        markDetailLayout = (TextView) findViewById(R.id.mark_detail_layout);
-        markNaviLayout = (TextView) findViewById(R.id.mark_navi_layout);
-        bottomNaviLayout = (LinearLayout) findViewById(R.id.bottom_navibar);
-        tabSoil = (LinearLayout) findViewById(R.id.tab_soil);
-        tabFavorite = (LinearLayout) findViewById(R.id.tab_favorite);
-        tabFunction = (LinearLayout) findViewById(R.id.tab_function);
-        tabMe = (LinearLayout) findViewById(R.id.tab_me);
+        calcAlterSample = (TextView) findViewById(R.id.tv_mark_calc_altersample);
+        markDetailLayout = (TextView) findViewById(R.id.tv_mark_detail);
+        markNaviLayout = (TextView) findViewById(R.id.tv_mark_navi);
 
     }
     private void initEvents()
@@ -190,13 +197,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         selectMapType.setOnClickListener(this);
         myLocation.setOnClickListener(this);
         selectLocationMode.setOnClickListener(this);
-
+        calcAlterSample.setOnClickListener(this);
         markDetailLayout.setOnClickListener(this);
         markNaviLayout.setOnClickListener(this);
-        tabSoil.setOnClickListener(this);
-        tabFavorite.setOnClickListener(this);
-        tabFunction.setOnClickListener(this);
-        tabMe.setOnClickListener(this);
+        markOverviewLayout.setOnClickListener(this);
+        /*
+        * drawerLayout左侧菜单的展开与隐藏可以被DrawerLayout.DrawerListener的实现监听到，
+        * 这样你就可以在菜单展开与隐藏的时刻做一些希望做的事情，比如更新actionbar菜单等。如果你的activity有actionbar的话，
+        * 还是建议你用ActionBarDrawerToggle来监听，ActionBarDrawerToggle实现了DrawerListener，所以他能做DrawerListener可以做的任何事情，
+        * 同时他还能将drawerLayout的展开和隐藏与actionbar的app 图标关联起来，当展开与隐藏的时候图标有一定的平移效果，点击图标的时候还能展开或者隐藏菜单。
+        * */
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MainActivity.this, mDrawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
+        mNavigationView.setNavigationItemSelectedListener(this);
     }
 
     /**
@@ -204,7 +219,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
      */
     private void initIntentParams()
     {
-        // intent from AlternativeParamsActivity
+        // intent from AlterParamsActivity
         Intent intentFromAlterParams = getIntent();
         //ArrayList<CoordinateAlterSample> alterSamplesList = new ArrayList<CoordinateAlterSample>();
         ArrayList<CoordinateAlterSample> alterSamplesList  = intentFromAlterParams.getParcelableArrayListExtra("alterSampleList");
@@ -265,10 +280,45 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.map_location:
                 changeLocationMode();
                 break;
-            case R.id.mark_detail_layout:
+            case R.id.tv_mark_calc_altersample://计算可替代样点
+                altersampleModel = getSetInfoFromShared();//从shared中读取配置信息，在本类中是读取用户选择了什么采样方法
+                if (markerFlag == 0) //表示是从Kml文件中得来的marker
+                {
+                    Bundle bundle = currentMarker.getExtraInfo();
+                    Coordinate markerCoor = bundle.getParcelable("marker_bundle");
+                    String markerName = markerCoor.getName();
+                    double latitude = markerCoor.getX();
+                    double longitude = markerCoor.getY();
+                    String markerLat = String.valueOf(latitude);
+                    String markerLng = String.valueOf(longitude);
+                    String markerLongLat = markerLng + "," + markerLat;//用于发送至服务器的坐标
+                    //显示在控件上的坐标，需要保留小数位
+                    String markerLongLatShow = String.valueOf(df.format(longitude)) + "," + String.valueOf(df.format(latitude));
+                    if (altersampleModel == 0)//表示采用相似度的计算方法
+                    {
+                        //String markerLongLat = markerLng + "," + markerLat;
+                        Intent intentToAlterOptions = new Intent(MainActivity.this, AlterParamsActivity.class);
+                        intentToAlterOptions.putExtra("markerLongLat", markerLongLat);//用于发送至服务器的坐标
+                        intentToAlterOptions.putExtra("markerLongLatShow", markerLongLatShow);//显示在控件上的坐标，需要保留小数位
+                        intentToAlterOptions.putExtra("markerName", markerName);
+                        startActivity(intentToAlterOptions);
+
+                    }
+                    if (altersampleModel == 1)
+                    {
+                        //String markerLongLat = markerLng + "," + markerLat;
+                        Intent intentToAlterFCMOptions = new Intent(MainActivity.this, AlterParamsFCMActivity.class);
+                        intentToAlterFCMOptions.putExtra("markerLongLat", markerLongLat);
+                        intentToAlterFCMOptions.putExtra("markerLongLatShow", markerLongLatShow);
+                        intentToAlterFCMOptions.putExtra("markerName", markerName);
+                        startActivity(intentToAlterFCMOptions);
+                    }
+                }
+                break;
+            case R.id.tv_mark_detail:
                 intentToSampleInfoActivity();
                 break;
-            case R.id.mark_navi_layout:
+            case R.id.tv_mark_navi:
 
                 if (BaiduNaviManager.isNaviInited()) {
                     ToastUtil.show(MainActivity.this, "百度导航引擎初始化成功，即将为您导航");
@@ -279,17 +329,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     ToastUtil.show(MainActivity.this, "百度导航引擎初始化失败！");
                 }
                 break;
-            case R.id.tab_soil:
-                startActivity(new Intent(MainActivity.this, SoilProfileActivity.class));
-                break;
-            case R.id.tab_favorite:
-                startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
-                break;
-            case R.id.tab_function:
-                startActivity(new Intent(MainActivity.this, FunctionActivity.class));
-                break;
-            case R.id.tab_me:
-                startActivity(new Intent(MainActivity.this, MyInfoActivity.class));
+            case R.id.mark_overview_layout:
+                /*
+                * 两个view重叠堆放，view1在上，view2在下，view1中有几个按钮.由于view1中的按钮设置了点击响应函数，等于消费了在按钮区域的点击，
+                * 底下view2便不会再响应点击事件了。在view1的非按钮区域点击，由于没有消费点击事件，点击事件会继续传到底下的view2
+                * （事件是先传到他们的父view，也就是包含他们的layout，父view遍历所有的子view传递事件），
+                * 如果需要view2任何区域都接收不到事件，应该设置整个view1的响应回调函数，以消费任何区域的点击事件。
+                * 即我们给markOverviewLayout设置一个onClick点击事件，什么都不写。这样，点击空白处时，地图界面便不会有任何反应了
+                * */
                 break;
             default:
                 break;
@@ -328,6 +375,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
             }
         });
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        switch (item.getItemId())
+        {
+            case R.id.nav_more:
+                startActivity(new Intent(MainActivity.this, MyInfoActivity.class));
+                break;
+            case R.id.nav_favorite:
+                startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
+                break;
+            case R.id.nav_help:
+                startActivity(new Intent(MainActivity.this, AppHelpActivity.class));
+                break;
+            case R.id.nav_about:
+                break;
+            case R.id.nav_exit:
+                finish();
+                ActivityCollector.finishAll();
+                break;
+            default:
+                break;
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.id_drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     /**
@@ -732,10 +807,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
 
         }
-        if (isBottomClickable == false)//若底部导航栏处于不可点击状态，就将其转为可点击状态
-        {
-            setBottomLayoutClickTrue();
-        }
     }
 
     @Override
@@ -763,9 +834,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             markerName.setText(markerCoor.getName());
             markerLatlng.setText(String.valueOf(df.format(latitude)) + "   " + String.valueOf(df.format(longitude)));
             markerCostLayout.setVisibility(View.GONE);
+            calcAlterSample.setVisibility(View.VISIBLE);
             markOverviewLayout.setVisibility(View.VISIBLE);
-            setBottomLayoutClickFalse();
-        }else {
+        }else { //服务器返回的可替代样点
             markerFlag = 1;
             Bundle bundle = marker.getExtraInfo();
             CoordinateAlterSample markerCoor = bundle.getParcelable("alterMarker_bundle");
@@ -775,9 +846,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             markerName.setText(markerCoor.getName());
             markerLatlng.setText(String.valueOf(df.format(latitude)) + "   " + String.valueOf(df.format(longitude)));
             markerCost.setText(String.valueOf(df.format(costVaule)));
+
             markerCostLayout.setVisibility(View.VISIBLE);
+            calcAlterSample.setVisibility(View.GONE);
             markOverviewLayout.setVisibility(View.VISIBLE);
-            setBottomLayoutClickFalse();
         }
 
 
@@ -1073,28 +1145,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         myBaiduMap.addOverlay(overlayOptions);
     }
 
-    /**
-     * 设置底部导航栏按钮不可点击
-     */
-    private void setBottomLayoutClickFalse()
-    {
-        tabSoil.setOnClickListener(null);
-        tabFavorite.setOnClickListener(null);
-        tabFunction.setOnClickListener(null);
-        tabMe.setOnClickListener(null);
-        isBottomClickable = false;
-    }
-    /**
-     * 设置底部导航栏按钮可以点击
-     */
-    private void setBottomLayoutClickTrue()
-    {
-        tabSoil.setOnClickListener(this);
-        tabFavorite.setOnClickListener(this);
-        tabFunction.setOnClickListener(this);
-        tabMe.setOnClickListener(this);
-        isBottomClickable = true;
-    }
     public boolean createSoilSampleDir()
     {
         SDFileHelper sdFileHelper = SDFileHelper.getInstance(MainActivity.this);
@@ -1489,6 +1539,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         SharedPreferences preferences = getSharedPreferences("saveAlterMarkerState_pref", MODE_PRIVATE);
         markerState = preferences.getInt(markerName, 0);
         return markerState;
+    }
+
+    /**
+     * @return
+     * 从本地读取用户设置的可替代样点的计算方法：相似度或者FCM
+     */
+    private int getSetInfoFromShared()
+    {
+        SharedPreferences preferences = getSharedPreferences("SettingInfo", MODE_PRIVATE);
+        int sampleModel = preferences.getInt("altersampleModel", 0);
+        return sampleModel;
+    }
+    @Override
+    public void onBackPressed() {
+        //当drawerLayout处于展开状态时，点击返回键，关闭drawerlayout，而不是退出程序
+        //GravityCompat.START, Push object to x-axis position at the start of its container, not changing its size
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.id_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 //    @Override
 //    public void onBackPressed() {

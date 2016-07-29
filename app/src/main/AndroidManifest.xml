@@ -63,11 +63,10 @@
         <activity android:name=".ui.sampleinfo.SamplePicSelectActivity"/>
         <activity android:name=".ui.myinfo.MyInfoActivity"/>
         <activity android:name=".ui.myinfo.SettingActivity"/>
-        <activity android:name=".ui.function.FunctionActivity"/>
         <activity android:name=".ui.function.EnvironVariableActivity"/>
         <activity android:name=".ui.function.FuzzyMembershipActivity"/>
         <activity android:name=".ui.function.FCMActivity"/>
-        <activity android:name=".ui.sampleinfo.AlternativeParamsActivity"/>
+        <activity android:name=".ui.sampleinfo.AlterParamsActivity"/>
         <activity android:name=".ui.sampleinfo.AlterSampleInfoActivity"/>
         <activity android:name=".ui.sampleinfo.AlterParamsFCMActivity"/>
         <activity android:name=".ui.main.BNDemoGuideActivity"/>

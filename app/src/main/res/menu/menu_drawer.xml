@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none">
+
+        <item android:id="@+id/nav_favorite"
+              android:icon="@drawable/icon_favorite"
+              android:title="@string/tab_favorite"/>
+        <item android:id="@+id/nav_more"
+              android:icon="@drawable/icon_more"
+              android:title="@string/more"/>
+    </group>
+
+    <group android:checkableBehavior="none"
+           android:id="@+id/group_others">
+
+        <item android:id="@+id/nav_help"
+              android:title="@string/help"/>
+        <item android:id="@+id/nav_about"
+              android:title="@string/about_me"/>
+        <item android:id="@+id/nav_exit"
+              android:title="@string/exit"/>
+    </group>
+
+</menu>

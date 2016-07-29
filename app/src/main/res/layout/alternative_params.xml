@@ -17,10 +17,42 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
     </android.support.design.widget.AppBarLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_8"
+        android:layout_marginLeft="@dimen/space_8"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:text="第一步："/>
+            <Button
+                android:id="@+id/btn_select_environ"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="点击这里 选择环境因子"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:text="第二步：设置参数"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:padding="@dimen/space_8"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
@@ -110,5 +142,21 @@
             android:layout_weight="7.0"/>
     </LinearLayout>
     <include layout="@layout/view_divide_line" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_8"
+        android:layout_marginLeft="@dimen/space_8"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_16"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:text="第三步：点击右上角的按钮，快去计算可替代样点吧"/>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.soil.profile.ui.SoilProfileActivity;
 import com.soil.soilsample.R;
-import com.soil.soilsample.base.ActivityCollector;
 import com.soil.soilsample.base.BaseActivity;
 
 /**
@@ -22,8 +21,7 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
     private Toolbar toolbar;
     private LinearLayout altersampleModel;
     private LinearLayout offlineMapLayout;
-    private LinearLayout setLayout;
-    private LinearLayout exitFinish;
+    private LinearLayout soilProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,15 +38,13 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_white_24dp);
         altersampleModel = (LinearLayout) findViewById(R.id.rl_altersample_model);
         offlineMapLayout = (LinearLayout) findViewById(R.id.rl_offline_map);
-        setLayout = (LinearLayout) findViewById(R.id.rl_set);
-        exitFinish = (LinearLayout) findViewById(R.id.rl_exit);
+        soilProfile = (LinearLayout) findViewById(R.id.rl_soil_profile);
     }
     private void initEvents()
     {
         altersampleModel.setOnClickListener(this);
         offlineMapLayout.setOnClickListener(this);
-        setLayout.setOnClickListener(this);
-        exitFinish.setOnClickListener(this);
+        soilProfile.setOnClickListener(this);
     }
     private void saveSetInfoToShared(int sampleModelId)
     {
@@ -81,21 +77,12 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_myinfo, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id)
         {
             case android.R.id.home:
                 finish();
-                break;
-            case R.id.action_help:
-                startActivity(new Intent(MyInfoActivity.this, AppHelpActivity.class));
                 break;
             default:
                 break;
@@ -113,13 +100,10 @@ public class MyInfoActivity extends BaseActivity implements View.OnClickListener
             case R.id.rl_offline_map:
                 startActivity(new Intent(MyInfoActivity.this, OfflineMapActivity.class));
                 break;
-            case R.id.rl_set:
-                startActivity(new Intent(MyInfoActivity.this, SettingActivity.class));
+            case R.id.rl_soil_profile:
+                startActivity(new Intent(MyInfoActivity.this, SoilProfileActivity.class));
                 break;
-            case R.id.rl_exit:
-                finish();
-                ActivityCollector.finishAll();
-                break;
+
             default:
                 break;
         }

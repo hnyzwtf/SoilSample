@@ -125,7 +125,7 @@ public class FileBrowserFragment extends Fragment {
     for (int i = 0; i < menu.size(); i++) {
       MenuItem item = menu.getItem(i);
       if ((item.getItemId() == R.id.action_add_sample)
-          || (item.getItemId() == R.id.menu_dir_select)) {
+          || (item.getItemId() == R.id.menu_dir_select)|| (item.getItemId() == R.id.action_upload)) {
         item.setVisible(false);
       } else if ((item.getItemId() == R.id.menu_dir_up)) {
         item.setVisible(true);

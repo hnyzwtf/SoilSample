@@ -20,7 +20,7 @@
     <string name="help">帮助</string>
     <string name="about_me">关于</string>
     <string name="offline_map_download">离线地图下载</string>
-    <string name="altersample_model">替代样点计算方法选择</string><!-- 地理环境相似度，FCM模糊隶属度-->
+    <string name="altersample_model">设置替代样点计算方法</string><!-- 地理环境相似度，FCM模糊隶属度-->
 
     <!-- FCM -->
     <string name="fcm_cluster">FCM聚类</string>
@@ -72,6 +72,7 @@
     <string name="soil_profile">土壤剖面</string>
     <string name="tab_favorite">收藏</string>
     <string name="more">更多</string>
+    <string name="setting">设置</string>
     <string name="sample_cost">可达性</string>
     <string name="sample_latlng">坐标</string>
     <string name="filebrowser_text">Current folder: \n/THis/is/a/long/path/to/test/if/this/will/span/multiple/lines</string>

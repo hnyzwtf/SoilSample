@@ -5,18 +5,26 @@
         <item android:id="@+id/nav_favorite"
               android:icon="@drawable/icon_favorite"
               android:title="@string/tab_favorite"/>
-        <item android:id="@+id/nav_more"
-              android:icon="@drawable/icon_more"
-              android:title="@string/more"/>
+        <item android:id="@+id/nav_soil"
+              android:icon="@drawable/icon_soil"
+              android:title="@string/soil_profile"/>
     </group>
-
+    <item android:title="@string/more"
+        android:id="@+id/item_more">
+        <menu>
+            <item
+                android:id="@+id/nav_offline_map"
+                android:icon="@drawable/icon_offline_map_download"
+                android:title="@string/offline_map_download"/>
+        </menu>
+    </item>
     <group android:checkableBehavior="none"
            android:id="@+id/group_others">
 
         <item android:id="@+id/nav_help"
               android:title="@string/help"/>
-        <item android:id="@+id/nav_about"
-              android:title="@string/about_me"/>
+        <item android:id="@+id/nav_set"
+              android:title="@string/setting"/>
         <item android:id="@+id/nav_exit"
               android:title="@string/exit"/>
     </group>

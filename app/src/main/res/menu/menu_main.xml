@@ -24,11 +24,5 @@
         android:icon="@drawable/menu_upload_icon"
         android:title="@string/menu_upload"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_about_app"
-        android:icon="@drawable/menu_about_icon"
-        android:title="关于"
-        app:showAsAction="never"
-        android:visible="false"/>
 
 </menu>

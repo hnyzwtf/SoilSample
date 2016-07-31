@@ -51,6 +51,7 @@ import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.baidu.navisdk.adapter.BNaviSettingManager;
 import com.baidu.navisdk.adapter.BaiduNaviManager;
 import com.google.gson.Gson;
+import com.soil.profile.ui.SoilProfileActivity;
 import com.soil.soilsample.BuildConfig;
 import com.soil.soilsample.R;
 import com.soil.soilsample.base.ActivityCollector;
@@ -67,6 +68,7 @@ import com.soil.soilsample.ui.favorite.FavoriteActivity;
 import com.soil.soilsample.ui.listener.MyOrientationListener;
 import com.soil.soilsample.ui.myinfo.AppHelpActivity;
 import com.soil.soilsample.ui.myinfo.MyInfoActivity;
+import com.soil.soilsample.ui.myinfo.OfflineMapActivity;
 import com.soil.soilsample.ui.sampleinfo.AlterParamsActivity;
 import com.soil.soilsample.ui.sampleinfo.AlterParamsFCMActivity;
 import com.soil.soilsample.ui.sampleinfo.AlterSampleInfoActivity;
@@ -382,7 +384,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         switch (item.getItemId())
         {
-            case R.id.nav_more:
+            case R.id.nav_soil:
+                startActivity(new Intent(MainActivity.this, SoilProfileActivity.class));
+                break;
+            case R.id.nav_offline_map:
+                startActivity(new Intent(MainActivity.this, OfflineMapActivity.class));
+                break;
+            case R.id.nav_set:
                 startActivity(new Intent(MainActivity.this, MyInfoActivity.class));
                 break;
             case R.id.nav_favorite:
@@ -390,8 +398,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.nav_help:
                 startActivity(new Intent(MainActivity.this, AppHelpActivity.class));
-                break;
-            case R.id.nav_about:
                 break;
             case R.id.nav_exit:
                 finish();
@@ -531,7 +537,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
         }
         //return super.onOptionsItemSelected(item);
-        return true;
+        return false;//注意，这里必须是false，否则FileBrowserFragment中toolbar上的返回按钮不可点击
     }
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {

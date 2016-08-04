@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Readme</title>
+<title>app_help</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style type="text/css">
 /* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
@@ -291,22 +291,52 @@ img {
 </style>
 </head>
 <body>
-<h3>soilsample使用教程简介（本系统持续更新中）：</h3>
-<ol>
+<h2>如何使用</h2>
+<h3>上传环境因子</h3>
+<ul>
+<li>进入程序，点击标题栏右上角的“+”，选择“上传环境因子”，将需要上传的环境因子置于“/storage/emulated/0/SoilSample/upload”文件夹下，设置好每个环境因子所属的类别，点击标题栏右上角的上传按钮即可。本教程以宣城市为例。如下图所示
+<img src="http://i.imgur.com/RG0FudK.jpg" /></li>
+</ul>
+<h3>添加样点数据</h3>
+<ul>
+<li>进入程序，点击标题栏右上角的“+”，选择“添加样点数据”，选择所需要添加的样点数据kml文件即可。本程序自带了示例kml文件---fcmsamples.kmz，位于/storage/emulated/0/SoilSample/文件夹下。如下图所示
+<img src="http://i.imgur.com/zkZLrsG.jpg" /></li>
+<li>kml文件添加成功后如下图所示
+<img src="http://i.imgur.com/JhnfSNB.jpg" /></li>
+</ul>
+<h3>计算可替代样点（地理相似度）</h3>
+<ul>
+<li>我们任意选择一个样点，假设为不可采点，点击此样点，如下图所示
+<img src="http://i.imgur.com/SzTB1aZ.jpg" /></li>
+<li>点击替代样点按钮，进入可替代样点计算页面
+<img src="http://i.imgur.com/A80VcpR.jpg" /></li>
 <li>
-<p>打开APP进入首页面，点击功能--环境因子选择，按照下图所示设置每一个item（checkbox可以随意选择，但下拉框必须按照如图方式设置）
-<img src="http://i.imgur.com/vo9cmBJ.jpg" /></p>
+选择环境因子，设置相应的参数，点击标题栏右上角对号即可。下面介绍一下相关的参数含义：
+<ul>
+<li>样点坐标：不可采点的坐标，即我们当前点击的样点；</li>
+<li>与不可采点的相似度：默认值为0.9，表示可替代样点与不可采点的最低相似度阈值为0.9；</li>
+<li>替代样点距离不可采点（米）：默认值为1000，表示可替代样点距离当前不可采点的范围在1000米以内。</li>
+</ul>
 </li>
+<li>计算可替代样点成功。计算成功的可替代样点（以红色图标显示）共有10个，样点图标中的数字表示当前可替代样点的优先级。点击任意一个可替代样点即可查看其详细信息。
+<img src="http://i.imgur.com/fUvS8OP.jpg" /></li>
+</ul>
+<h3>收藏</h3>
+<ul>
+<li>进入程序，点击标题栏左侧的图标，打开侧边抽屉栏，点击收藏，进入收藏页面。
+<img src="http://i.imgur.com/ahGwU5Y.jpg" /></li>
 <li>
-<p>设置完毕，点击保存，返回主页面，点击Toolbar上的加号，选择添加样点数据，打开文件浏览器，找到SoilSample文件夹，点击文件夹内的fcmsamples.kmz，稍等片刻，此Kml中的所有数据即显示在地图上。选择某个样点并点击</p>
+在这里你可以对已经添加的样点kml文件进行管理，目前只支持对一个kml文件进行管理。如下图所示，我们添加了fcmsamples.kmz样点文件，长按后弹出如下菜单：
+<ul>
+<li>显示：显示fcmsamples.kmz在地图界面的图标；</li>
+<li>隐藏：隐藏fcmsamples.kmz在地图上的样点图标显示；</li>
+<li>删除：删除fcmsamples.kmz在地图上的图标显示，删除之后，你需要重新添加样点数据；</li>
+<li>保存：将添加的fcmsamples.kmz在地图上的图标保存下来，这样重启程序之后样点图标直接会显示在地图界面，无需重新添加样点数据；</li>
+</ul>
 </li>
-</ol>
-<p><img src="http://i.imgur.com/T8Kb4mg.jpg" /></p>
-<p>3.点击详情--计算可替代样点--点击确定即可，结果如图所示：</p>
-<p><img src="http://i.imgur.com/uPAxeXK.jpg" /></p>
-<p>4.红色的样点便是结果样点。功能页面的“模糊隶属度图层选择”与“FCM聚类”是计算可替代样点的另外一种算法，在客户端的操作，设置步骤和上述步骤类似（这两个功能可忽视）。</p>
-<p>5.点击收藏，在这里可对添加的kml文件进行统一操作，比如，显示（将地图上隐藏的marker显示出来），隐藏（隐藏地图上的marker），保存（将添加的kml文件保存到本地，以便程序退出下次加载时可以直接显示），目前只支持对一个kml文件进行操作。
-<img src="http://i.imgur.com/rKKZDfi.jpg" /></p>
+<li>在这里也可以对生成的可替代样点进行管理。如，我们计算编号为35082不可采点的可替代样点，那么计算可替代样点成功后，地图上显示的10个可替代样点的名称即为35082，长按也可以对其进行显示，隐藏，删除，保存等操作。
+<img src="http://i.imgur.com/K7MjvOr.jpg" /></li>
+</ul>
 
 </body>
 </html>

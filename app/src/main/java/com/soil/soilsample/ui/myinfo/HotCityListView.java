@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.ListView;
 
 /**
- * Created by GIS on 2016/7/8 0008.
+ * 自定义热门城市listview
  */
 public class HotCityListView extends ListView {
     public HotCityListView(Context context) {

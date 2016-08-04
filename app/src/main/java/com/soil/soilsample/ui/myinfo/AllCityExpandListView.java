@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.ExpandableListView;
 
 /**
- * Created by GIS on 2016/7/8 0008.
+ * 自定义expandlistview，用于显示所有城市列表，因当expandlistview与listview在本程序中同时使用时会导致每个控件只会显示一条数据
  */
 public class AllCityExpandListView extends ExpandableListView {
     public AllCityExpandListView(Context context) {

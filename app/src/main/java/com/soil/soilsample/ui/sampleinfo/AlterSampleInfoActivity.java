@@ -57,7 +57,14 @@ public class AlterSampleInfoActivity extends BaseActivity {
         Intent intentFromMainActivity = getIntent();
         intentBundle = intentFromMainActivity.getBundleExtra("alterMarkerInfoBundle");
         CoordinateAlterSample markerCoor = intentBundle.getParcelable("alterMarker_bundle");
-        markerName = markerCoor.getName();
+        int nameTxt = 0;
+        try {//从服务器返回的可替代样点的编号是从0开始的，为了显示，让每个编号加1，从1开始显示
+            nameTxt = Integer.parseInt(markerCoor.getName()) + 1;
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        markerName = String.valueOf(nameTxt);
         double latitude = markerCoor.getY();
         double longitude = markerCoor.getX();
         markerCost = markerCoor.getCostValue();

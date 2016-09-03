@@ -849,7 +849,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             latitude = markerCoor.getY();//可替代样点坐标，是从服务器返回的，因此getX是经度，getY是纬度
             longitude = markerCoor.getX();
             costVaule = Double.parseDouble(markerCoor.getCostValue());
-            markerName.setText(markerCoor.getName());
+            int nameTxt = 0;
+            try {//从服务器返回的可替代样点的编号是从0开始的，为了显示，让每个编号加1，从1开始显示
+                nameTxt = Integer.parseInt(markerCoor.getName()) + 1;
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            markerName.setText(String.valueOf(nameTxt));
             markerLatlng.setText(String.valueOf(df.format(latitude)) + "   " + String.valueOf(df.format(longitude)));
             markerCost.setText(String.valueOf(df.format(costVaule)));
 

@@ -193,7 +193,7 @@ public class AlterParamsActivity extends BaseActivity implements View.OnClickLis
         coorUnaccessEdit.setText(markerLongLatShow);//默认显示当前操作样点的坐标
         simiThresholdEdit.setText("0.5");
         candidateThresholdEdit.setText("0.9");
-        candidateRadiusEdit.setText("1000");
+        candidateRadiusEdit.setText("500");
 
     }
 

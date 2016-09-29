@@ -8,8 +8,8 @@ android {
         applicationId "com.soil.soilsample"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 13
-        versionName "2.3.3"
+        versionCode 14
+        versionName "2.3.4"
     }
     buildTypes {
         release {

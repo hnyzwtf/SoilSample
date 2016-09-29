@@ -147,7 +147,7 @@ public class AlterParamsFCMActivity extends BaseActivity implements View.OnClick
     {
         coorUnaccessFCMEdit.setText(markerLongLatShow);//默认显示当前操作样点的坐标
         membershipThresholdEdit.setText("0.02");
-        candidateFCMRadiusEdit.setText("1000");
+        candidateFCMRadiusEdit.setText("500");
     }
     public void getEditText()
     {

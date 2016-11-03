@@ -80,6 +80,14 @@
                     android:background="@drawable/add_poi_map_selection_btn_pressed"
                     android:scaleType="centerInside"
                     android:src="@drawable/track_collect_running" />
+                <ImageView
+                    android:id="@+id/draw_polygon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/add_poi_map_selection_btn_pressed"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/draw_polygon" />
 
             </LinearLayout>
 

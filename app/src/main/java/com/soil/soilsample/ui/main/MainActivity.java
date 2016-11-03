@@ -32,6 +32,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.DotOptions;
 import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
@@ -40,12 +41,16 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolygonOptions;
+import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.utils.CoordinateConverter;
+import com.baidu.mapapi.utils.SpatialRelationUtil;
 import com.baidu.navisdk.adapter.BNOuterTTSPlayerCallback;
 import com.baidu.navisdk.adapter.BNRoutePlanNode;
 import com.baidu.navisdk.adapter.BNaviSettingManager;
@@ -81,11 +86,14 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import im.fir.sdk.FIR;
 import im.fir.sdk.VersionCheckCallback;
+
+import static com.baidu.location.b.g.i;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener, FileBrowserFragment.OnFileAndFolderFinishListener,
         BaiduMap.OnMarkerClickListener, BaiduMap.OnMapClickListener, NavigationView.OnNavigationItemSelectedListener{
@@ -95,7 +103,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private View defaultBaiduMapLogo = null;
     private View defaultBaiduMapScaleUnit = null;
     private String[] types = {"普通地图","卫星地图"};
-    private ImageView selectMapType, myLocation, selectLocationMode;
+    private ImageView selectMapType, myLocation, selectLocationMode, drawPolygonMode;
     // location
     private LocationClient myLocationClient;
     private MyLocationListener mLocationListener;
@@ -150,7 +158,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private static final int HIDE_MARKERS = 2;
     private static final int DELETE_MARKERS = 3;
     private static final int SAVE_MARKERS = 4;// 保存按钮，主要作用是，当退出程序，再打开程序后，添加过的marker可以直接显示在地图上
-
+    // draw polygon
+    private String[] polygonType = {"绘制多边形","完成绘制","清除多边形"};
+    private Boolean drawPolygonFlag = false;//标志位，当为true时表示开始绘制多边形，为false时不绘制
+    private List<LatLng> polygonPts = new ArrayList<LatLng>();//多边形的顶点坐标
+    private Overlay polygonOverlay;//表示一个多边形覆盖物
+    private List<Overlay> dotOverlayList = new ArrayList<Overlay>();//一个点就是一个dotOverlay，这是多个顶点Overlay，即统一对顶点进行管理
+    //private Overlay dotOverlay;//一个点Overlay
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,7 +185,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         showMarkersOnCreate();
         showAlterMarkersOnCreate();
         checkForUpdate();
-        Log.d(TAG, "onCreate: ");
+        //Log.d(TAG, "onCreate: ");
     }
     private void initView()
     {
@@ -187,6 +201,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         selectMapType = (ImageView) findViewById(R.id.map_type);
         myLocation = (ImageView) findViewById(R.id.my_location);
         selectLocationMode = (ImageView) findViewById(R.id.map_location);
+        drawPolygonMode = (ImageView) findViewById(R.id.draw_polygon);
 
         markOverviewLayout = (LinearLayout) findViewById(R.id.mark_overview_layout);
         calcAlterSample = (TextView) findViewById(R.id.tv_mark_calc_altersample);
@@ -197,6 +212,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private void initEvents()
     {
         selectMapType.setOnClickListener(this);
+        drawPolygonMode.setOnClickListener(this);
         myLocation.setOnClickListener(this);
         selectLocationMode.setOnClickListener(this);
         calcAlterSample.setOnClickListener(this);
@@ -281,6 +297,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.map_location:
                 changeLocationMode();
+                break;
+            case R.id.draw_polygon:
+                drawPolygonType();
                 break;
             case R.id.tv_mark_calc_altersample://计算可替代样点
                 altersampleModel = getSetInfoFromShared();//从shared中读取配置信息，在本类中是读取用户选择了什么采样方法
@@ -719,54 +738,83 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_9));
         bitmapList.add(BitmapDescriptorFactory.fromResource(R.drawable.b_poi_10));
 
-        for (int i = 0; i < coorList.size(); i++)
+        Boolean ptInPolygon = false;
+        // 循环遍历coorList，若在多边形内就将其删除。边遍历边删除，使用迭代器
+        Iterator<CoordinateAlterSample> iter = coorList.iterator();
+        while (iter.hasNext())
         {
-            latitude = coorList.get(i).getY();
-            longitude = coorList.get(i).getX();
+            CoordinateAlterSample item = iter.next();//小心迭代器越界，导致java.util.NoSuchElementException
+            latitude = item.getY();
+            longitude = item.getX();
             //将gps坐标转化为百度坐标,coorList是服务器返回的可替代坐标，getX是经度，getY是纬度
             desLatLng = CoorToBaidu.GPS2Baidu09ll(latitude, longitude);
-
-            alterSampleName = coorList.get(i).getName();
-            switch (Integer.parseInt(alterSampleName))
+            //判断坐标是否包含在我们绘制的多边形内部,true表示点在多边形内部
+            if (polygonPts.size() > 0)
             {
-                case 0:
-                    //设置marker属性
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(0)).zIndex(6);
-                    break;
-                case 1:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(1)).zIndex(6);
-                    break;
-                case 2:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(2)).zIndex(6);
-                    break;
-                case 3:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(3)).zIndex(6);
-                    break;
-                case 4:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(4)).zIndex(6);
-                    break;
-                case 5:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(5)).zIndex(6);
-                    break;
-                case 6:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(6)).zIndex(6);
-                    break;
-                case 7:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(7)).zIndex(6);
-                    break;
-                case 8:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(8)).zIndex(6);
-                    break;
-                case 9:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(9)).zIndex(6);
-
-                    break;
-                default:
-                    overlayOptions = new MarkerOptions().position(desLatLng).icon(defaultAlterSampleBitmap).zIndex(6);
-                    break;
+                ptInPolygon = SpatialRelationUtil.isPolygonContainsPoint(polygonPts, desLatLng);
             }
+            if (ptInPolygon)//如果样点落在了多边形内部，就将这个样点从list中移除
+            {
+                iter.remove();
+            }
+        }
+       //经过迭代器删除操作之后，可能会导致没有满足条件的样点，即coorList为空
+        if (coorList.size() > 0)
+        {
+            //可替代样点的重要性排序就是按照0-10的顺序存放在coorList中的，即循环i就是样点的排序
+            for (int i = 0; i < coorList.size(); i++)
+            {
+                // ---------------------
+               // Log.d(TAG, "ID: "+ i + ", inPolygon: " + ptInPolygon);
+                // ------------------------
 
-            marker = (Marker) myBaiduMap.addOverlay(overlayOptions);
+                latitude = coorList.get(i).getY();
+                longitude = coorList.get(i).getX();
+                //将gps坐标转化为百度坐标,coorList是服务器返回的可替代坐标，getX是经度，getY是纬度
+                desLatLng = CoorToBaidu.GPS2Baidu09ll(latitude, longitude);
+
+                //alterSampleName = coorList.get(i).getName();
+                //switch (Integer.parseInt(alterSampleName))
+                switch (i)
+                {
+                    case 0:
+                        //设置marker属性
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(0)).zIndex(6);
+                        break;
+                    case 1:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(1)).zIndex(6);
+                        break;
+                    case 2:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(2)).zIndex(6);
+                        break;
+                    case 3:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(3)).zIndex(6);
+                        break;
+                    case 4:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(4)).zIndex(6);
+                        break;
+                    case 5:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(5)).zIndex(6);
+                        break;
+                    case 6:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(6)).zIndex(6);
+                        break;
+                    case 7:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(7)).zIndex(6);
+                        break;
+                    case 8:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(8)).zIndex(6);
+                        break;
+                    case 9:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(bitmapList.get(9)).zIndex(6);
+
+                        break;
+                    default:
+                        overlayOptions = new MarkerOptions().position(desLatLng).icon(defaultAlterSampleBitmap).zIndex(6);
+                        break;
+                }
+
+                marker = (Marker) myBaiduMap.addOverlay(overlayOptions);
 
 
            /* //设置textoptions属性
@@ -776,12 +824,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     .align(TextOptions.ALIGN_RIGHT, TextOptions.ALIGN_TOP);
             myBaiduMap.addOverlay(textOptions);*/
 
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("alterMarker_bundle", coorList.get(i));
-            marker.setExtraInfo(bundle);
-            alterMarkers.add(marker);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("alterMarker_bundle", coorList.get(i));
+                bundle.putInt("markerNum", i);
+                marker.setExtraInfo(bundle);
+                alterMarkers.add(marker);
+            }
+        }else {
+            ToastUtil.show(MainActivity.this, "没有符合条件的样点");
         }
-
 
         MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newLatLngZoom(desLatLng, 16f);
         myBaiduMap.animateMapStatus(mapStatusUpdate);
@@ -790,7 +841,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
 
     @Override
-    public void onMapClick(LatLng latLng) {
+    public void onMapClick(LatLng point) {
 
         if (markOverviewLayout.getVisibility() == View.VISIBLE)
         {
@@ -812,6 +863,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
             }
 
+        }
+        //Log.d(TAG, "onMapClick: " + drawPolygonFlag);
+        // begin to draw polygon
+        if (drawPolygonFlag)
+        {
+            //构建用户绘制多边形的Option对象
+            OverlayOptions dotOption = new DotOptions()
+                    .center(point)
+                    .radius(10)
+                    .color(0XFFfaa755);
+            //在地图上添加dotOption，用于显示
+            Overlay dotOverlay = myBaiduMap.addOverlay(dotOption);
+            polygonPts.add(point);
+            dotOverlayList.add(dotOverlay);
         }
     }
 
@@ -846,12 +911,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             markerFlag = 1;
             Bundle bundle = marker.getExtraInfo();
             CoordinateAlterSample markerCoor = bundle.getParcelable("alterMarker_bundle");
+            int markerNum = bundle.getInt("markerNum");//样点的重要性次序，也即样点的编号name
             latitude = markerCoor.getY();//可替代样点坐标，是从服务器返回的，因此getX是经度，getY是纬度
             longitude = markerCoor.getX();
             costVaule = Double.parseDouble(markerCoor.getCostValue());
             int nameTxt = 0;
             try {//从服务器返回的可替代样点的编号是从0开始的，为了显示，让每个编号加1，从1开始显示
-                nameTxt = Integer.parseInt(markerCoor.getName()) + 1;
+                //nameTxt = Integer.parseInt(markerCoor.getName()) + 1;
+                nameTxt = markerNum + 1;
             }catch (Exception e)
             {
                 e.printStackTrace();
@@ -1071,7 +1138,81 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 }).show();
     }
+    private void drawPolygonType()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.draw_polygon)
+                .setTitle("绘制不可采区域多边形")
+                .setItems(polygonType, new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String select = polygonType[which];
+                        if (select.equals("绘制多边形")) {
+                            beginDrawPolygon();
+                        }else if (select.equals("完成绘制"))
+                        {
+                            endDrawPolygon();
+                        }
+                        else if (select.equals("清除多边形")) {
+                            clearMyPolygon();
+                        }
+                    }
+                }).show();
+    }
 
+    private void beginDrawPolygon()
+    {  //开始绘制之前，先判断地图上是否已有多边形，如有，则清除
+        if (polygonPts.size() > 0 || dotOverlayList.size() > 0)
+        {
+
+            polygonPts.clear();//清空多边形的顶点坐标
+            for (int i = 0; i < dotOverlayList.size(); i++)
+            {
+                dotOverlayList.get(i).remove();//清空每一个dotOverlay
+            }
+            dotOverlayList.clear();
+            if (polygonOverlay != null)
+            {
+
+                polygonOverlay.remove();//清空多边形
+            }
+        }
+
+        //开始绘制，flag置为true
+        drawPolygonFlag = true;
+    }
+    private void endDrawPolygon()
+    {
+        if (polygonPts.size() > 0)
+        {
+            //构建用户绘制多边形的Option对象
+            OverlayOptions polygonOption = new PolygonOptions()
+                    .points(polygonPts)
+                    .stroke(new Stroke(5, 0xAA00FF00))
+                    .fillColor(0xAAFFFF00);
+            //在地图上添加多边形Option，用于显示
+            polygonOverlay = myBaiduMap.addOverlay(polygonOption);
+        }
+        drawPolygonFlag = false;
+    }
+    private void clearMyPolygon()
+    {
+        if (polygonPts.size() > 0 || dotOverlayList.size() > 0)
+        {
+
+            polygonPts.clear();//清空多边形的顶点坐标
+            for (int i = 0; i < dotOverlayList.size(); i++)
+            {
+                dotOverlayList.get(i).remove();//清空每一个dotOverlay
+            }
+            dotOverlayList.clear();
+            if (polygonOverlay != null)
+            {
+
+                polygonOverlay.remove();//清空多边形
+            }
+        }
+    }
     /**
      * 改变定位模式
      */
@@ -1133,7 +1274,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         initIntentParams();
         showHideDelMarkers();//对加载的Kml文件的操作
         showHideDelAlterMarkers();//对可替代样点的操作
-        Log.d(TAG, "onResume: ");
+        //Log.d(TAG, "onResume: ");
     }
 
     @Override

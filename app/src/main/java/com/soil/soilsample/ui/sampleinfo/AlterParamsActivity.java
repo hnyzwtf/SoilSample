@@ -20,6 +20,7 @@ import com.soil.soilsample.base.BaseActivity;
 import com.soil.soilsample.base.BaseApplication;
 import com.soil.soilsample.model.AsyncResponse;
 import com.soil.soilsample.model.CoordinateAlterSample;
+import com.soil.soilsample.support.util.BaiduToWGS84;
 import com.soil.soilsample.support.util.ToastUtil;
 import com.soil.soilsample.ui.dialog.CustomWaitDialog;
 import com.soil.soilsample.ui.function.EnvironVariableActivity;
@@ -49,6 +50,8 @@ public class AlterParamsActivity extends BaseActivity implements View.OnClickLis
     private Button selectEnvironBtn;//点击这里，选择环境因子按钮
     private String markerLongLat;//注意，发送给服务器的坐标，经度在前，纬度在后
     private String markerLongLatShow;//默认显示在coorUnaccessEdit中的坐标，保留了小数位
+    private double locLat;//用户定位坐标
+    private double locLng;
 
     private EditText coorUnaccessEdit;
     private EditText simiThresholdEdit;//相似度计算的阈值，应该改为simiThresholdEdit
@@ -94,6 +97,9 @@ public class AlterParamsActivity extends BaseActivity implements View.OnClickLis
         markerLongLat = intent.getStringExtra("markerLongLat");
         markerLongLatShow = intent.getStringExtra("markerLongLatShow");
         markerName = intent.getStringExtra("markerName");
+        locLat = intent.getDoubleExtra("locLat", 30.90023);// 119.233772123;30.9002342384
+        locLng = intent.getDoubleExtra("locLng", 119.23377);
+
     }
     private void initView() {
         coorUnaccessEdit = (EditText) findViewById(R.id.edit_unaccess_coor);
@@ -210,6 +216,10 @@ public class AlterParamsActivity extends BaseActivity implements View.OnClickLis
     private void generateJson()
     {
         //getEnvironParamsFromShared();
+        //将百度坐标转为wgs84
+        double locateLat = BaiduToWGS84.baiduLat2wgs(locLng, locLat);
+        double locateLng = BaiduToWGS84.baiduLng2wgs(locLng, locLat);
+
         getEditText();
 
         String jsonResult = "";
@@ -221,6 +231,8 @@ public class AlterParamsActivity extends BaseActivity implements View.OnClickLis
             object.put("threshold", simiThreshold);
             object.put("candidateThreshold", candidateThreshold);
             object.put("candidateRadius", candidateRadius);
+            object.put("userPointX", String.valueOf(locateLng));//定位经度
+            object.put("userPointY", String.valueOf(locateLat));//纬度
             jsonResult = object.toString();
 
         }catch (JSONException e)
@@ -232,7 +244,7 @@ public class AlterParamsActivity extends BaseActivity implements View.OnClickLis
     public void sendRequest()
     {
         generateJson();
-        //Log.d(TAG, "jsonRequestForAlterSample is :"+jsonRequestForAlterSample);
+       // Log.d(TAG, "jsonRequestForAlterSample is :"+jsonRequestForAlterSample);
         try {
             final SocketConnAsync socketConn = new SocketConnAsync();
             socketConn.execute(jsonRequestForAlterSample);
@@ -351,7 +363,7 @@ public class AlterParamsActivity extends BaseActivity implements View.OnClickLis
         protected void onPostExecute(String msg) {
 
             super.onPostExecute(msg);
-           // Log.d(TAG, "onPostExecute: msg is " + msg);
+            //Log.d(TAG, "onPostExecute: msg is " + msg);
             if (connected)
             {
                 if (msg != null)

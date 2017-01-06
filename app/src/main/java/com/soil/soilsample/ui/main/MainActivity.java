@@ -303,6 +303,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.tv_mark_calc_altersample://计算可替代样点
                 altersampleModel = getSetInfoFromShared();//从shared中读取配置信息，在本类中是读取用户选择了什么采样方法
+                double locLat = latitude;//用户定位坐标
+                double locLng = longtitude;
                 if (markerFlag == 0) //表示是从Kml文件中得来的marker
                 {
                     Bundle bundle = currentMarker.getExtraInfo();
@@ -322,6 +324,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         intentToAlterOptions.putExtra("markerLongLat", markerLongLat);//用于发送至服务器的坐标
                         intentToAlterOptions.putExtra("markerLongLatShow", markerLongLatShow);//显示在控件上的坐标，需要保留小数位
                         intentToAlterOptions.putExtra("markerName", markerName);
+                        intentToAlterOptions.putExtra("locLat", locLat);//传送用户定位坐标
+                        intentToAlterOptions.putExtra("locLng", locLng);
+
                         startActivity(intentToAlterOptions);
 
                     }
@@ -377,7 +382,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         option.setCoorType("bd09ll");//设置坐标的类型
         option.setIsNeedAddress(true);//返回当前的位置信息，如果不设置为true，默认就为false，就无法获得位置的信息
         option.setOpenGps(true);//打开GPS
-        option.setScanSpan(5000);//表示5s中进行一次定位请求
+        option.setScanSpan(1000);//表示1s进行一次定位请求
         myLocationClient.setLocOption(option);
         useLocationOrientationListener();//调用方向传感器
 
@@ -500,6 +505,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         defaultBaiduMapLogo.setPadding(300, -10, 100, 100);//设置该默认Logo View的位置，因为这个该View的位置会影响下面的刻度尺单位View显示的位置
         mMapView.removeViewAt(1);//最后移除默认百度地图的logo View
         defaultBaiduMapScaleUnit = mMapView.getChildAt(2);//得到百度地图的默认单位刻度的View
+        // void setPadding (int left,int top,int right,int bottom)
         defaultBaiduMapScaleUnit.setPadding(100, 0, 115,200);//最后设置调整百度地图的默认单位刻度View的位置
         mMapView.removeViewAt(2);
 
